@@ -1,0 +1,6 @@
+Pipfile
+Pipfile.lock
+pyproject.toml
+**/.*
+.vscode/*
+**/*.pdf

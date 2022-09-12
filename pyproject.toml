@@ -1,0 +1,45 @@
+[project]
+name = "PoliAna"
+description = "political analysis using nlp"
+version = "0.1.0"
+requires-python = "~=3.10"
+authors = [
+    { name = "Felix Hoffmann", email = "inf20016@lehre.dhbw-stuttgart.de" },
+    { name = "Leopold Fuchs", email = "inf20052@lehre.dhbw-stuttgart.de" },
+]
+keywords = ["nlp", "political analysis"]
+
+[tool.mypy]
+mypy_path = 'src'
+check_untyped_defs = true
+disallow_any_generics = true
+ignore_missing_imports = true
+no_implicit_optional = true
+show_error_codes = true
+strict_equality = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+no_implicit_reexport = true
+
+[tool.black]
+line-length = 120
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.tox
+  | venv
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | deploy
+  | presentations
+)/
+'''
+
+[tool.isort]
+profile = "black"
