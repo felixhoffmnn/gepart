@@ -1,8 +1,9 @@
-# Studienarbeitsthema
+# PoliAna: Nachrichten und Politikanalyse mittels Natural Language Processing
 
-- [Studienarbeitsthema](#studienarbeitsthema)
+- [PoliAna: Nachrichten und Politikanalyse mittels Natural Language Processing](#poliana-nachrichten-und-politikanalyse-mittels-natural-language-processing)
     - [Problemstellung und Ziel der Arbeit](#problemstellung-und-ziel-der-arbeit)
     - [Geplantes Vorgehen](#geplantes-vorgehen)
+    - [Literatur](#literatur)
 
 ## Problemstellung und Ziel der Arbeit
 
