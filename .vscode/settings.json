@@ -1,3 +1,4 @@
 {
-    "cSpell.words": ["docstrings", "Hoffmann", "kontakt", "pytests"]
+    "cSpell.words": ["docstrings", "Hoffmann", "kontakt", "pytests"],
+    "cSpell.ignorePaths": [".git", ".vscode"]
 }
