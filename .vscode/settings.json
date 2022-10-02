@@ -1,6 +1,6 @@
 {
   "cSpell.language": "en,de-de",
-  "cSpell.words": ["DHBW", "Studienarbeit"],
+  "cSpell.words": ["DHBW", "Studienarbeit", "mkdocs"],
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[python]": {
