@@ -1,0 +1,13 @@
+name: 🎓 DHBW
+title: "🎓[dhbw] <Title>"
+description: Duale Hochschule Baden-Württemberg
+labels: ["dhbw"]
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the task
+      description: Describe the task which needs to be done for the DHBW.
+    validations:
+      required: true
