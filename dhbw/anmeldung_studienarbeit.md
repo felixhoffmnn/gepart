@@ -24,9 +24,9 @@ Zunächst werden die Nachrichtenplattformen anhand einer wissenschaftlichen Meth
 
 Folgend ist einige Literatur gelistet, welche NLP und Fake News Detection behandeln.
 
--   Lorem Ipsum
+- Lorem Ipsum
 
 Methodik:
 
--   Crisp
+- Crisp
 -

@@ -1,8 +1,8 @@
 {
-    "recommendations": [
-        "seatonjiang.gitmoji-vscode",
-        "streetsidesoftware.code-spell-checker",
-        "adpyke.codesnap",
-        "streetsidesoftware.code-spell-checker-german"
-    ]
+  "recommendations": [
+    "seatonjiang.gitmoji-vscode",
+    "streetsidesoftware.code-spell-checker",
+    "adpyke.codesnap",
+    "streetsidesoftware.code-spell-checker-german"
+  ]
 }

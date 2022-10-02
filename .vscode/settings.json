@@ -1,4 +1,23 @@
 {
-    "cSpell.words": ["docstrings", "Hoffmann", "kontakt", "pytests"],
-    "cSpell.ignorePaths": [".git", ".vscode"]
+  "cSpell.language": "en,de-de",
+  "cSpell.words": [
+    "docstrings",
+    "Hoffmann",
+    "kontakt",
+    "pytests",
+    "autorefs",
+    "DHBW",
+    "fontawesome",
+    "linkedin",
+    "mkdocs",
+    "mkdocstrings",
+    "Studienarbeit"
+  ],
+  "cSpell.ignorePaths": [".git", ".vscode"],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[python]": {
+    "editor.defaultFormatter": null
+  },
+  "python.formatting.provider": "black"
 }
