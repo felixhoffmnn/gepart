@@ -1,0 +1,10 @@
+{
+  "cSpell.language": "en,de-de",
+  "cSpell.words": ["DHBW", "Studienarbeit"],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[python]": {
+    "editor.defaultFormatter": null
+  },
+  "python.formatting.provider": "black"
+}
