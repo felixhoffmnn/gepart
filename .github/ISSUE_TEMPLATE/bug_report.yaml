@@ -8,8 +8,7 @@ body:
     id: description
     attributes:
       label: Describe the bug
-      description: |
-        A clear description of what the bug is. Please attach screenshot into Screenshot section below.
+      description: A clear description of what the bug is. Please attach screenshot into Screenshot section below.
       placeholder: Bug description
     validations:
       required: true

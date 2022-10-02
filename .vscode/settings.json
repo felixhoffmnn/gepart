@@ -1,16 +1,17 @@
 {
   "cSpell.language": "en,de-de",
   "cSpell.words": [
+    "autorefs",
+    "dhbw",
+    "DHBW",
     "docstrings",
+    "fontawesome",
     "Hoffmann",
     "kontakt",
-    "pytests",
-    "autorefs",
-    "DHBW",
-    "fontawesome",
     "linkedin",
     "mkdocs",
     "mkdocstrings",
+    "pytests",
     "Studienarbeit"
   ],
   "cSpell.ignorePaths": [".git", ".vscode"],
