@@ -29,6 +29,7 @@ flake8 = "^5.0.4"
 pytest = "^7.1.3"
 autopep8 = "^1.7.0"
 pre-commit = "^2.20.0"
+pytest-cov = "^4.0.0"
 
 [tool.mypy]
 mypy_path = 'src'
@@ -64,6 +65,9 @@ exclude = '''
 
 [tool.isort]
 profile = "black"
+
+[tool.pytest]
+testpaths = "tests"
 
 [build-system]
 requires = ["poetry-core"]

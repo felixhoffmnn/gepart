@@ -1,8 +1,8 @@
 # PoliAna: Nachrichten und Politikanalyse mittels Natural Language Processing
 
--   [PoliAna: Nachrichten und Politikanalyse mittels Natural Language Processing](#poliana-nachrichten-und-politikanalyse-mittels-natural-language-processing)
-    -   [Abstract](#abstract)
-    -   [Get started](#get-started)
+- [PoliAna: Nachrichten und Politikanalyse mittels Natural Language Processing](#poliana-nachrichten-und-politikanalyse-mittels-natural-language-processing)
+  - [Abstract](#abstract)
+  - [Get started](#get-started)
 
 ## Abstract
 
@@ -14,6 +14,6 @@ Excepteur ea eiusmod adipisicing dolor do qui mollit tempor. Tempor sit cillum i
 
 <!-- TODO: Edit list -->
 
-1. Run `pipenv install --dev` to install all dependencies (even the ones for development)
-    - Afterwards, run `pipenv shell` to activate the virtual environment
-2. Install the pre-commit hooks with `pre-commit install`
+1. Run `poetry install` to install all dependencies (even the ones for development)
+   - Afterwards, run `poetry shell` to activate the virtual environment
+2. Install the pre-commit hooks with `poetry run pre-commit install`

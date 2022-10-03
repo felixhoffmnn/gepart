@@ -1,18 +1,54 @@
+# TODO: Add CI section
 repos:
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.10.1
+  - repo: local
     hooks:
       - id: isort
-  - repo: https://github.com/psf/black
-    rev: 22.6.0
-    hooks:
+        name: isort
+        stages: [commit]
+        language: system
+        entry: poetry run isort .
+        types: [python]
+
       - id: black
-        language_version: python3.10
-  - repo: https://github.com/PyCQA/flake8
-    rev: 5.0.4
-    hooks:
+        name: black
+        stages: [commit]
+        language: system
+        entry: poetry run black .
+        types: [python]
+
       - id: flake8
+        name: flake8
+        stages: [commit]
+        language: system
+        entry: poetry run flake8
+        types: [python]
+
+      - id: mypy
+        name: mypy
+        stages: [commit]
+        language: system
+        entry: poetry run mypy
+        types: [python]
+        require_serial: true
+
+      - id: pytest
+        name: pytest
+        stages: [commit]
+        language: system
+        entry: poetry run pytest
+        types: [python]
+        pass_filenames: false
+
+      - id: pytest-cov
+        name: pytest
+        stages: [push]
+        language: system
+        entry: poetry run pytest --cov --cov-fail-under=80
+        types: [python]
+        pass_filenames: false
+
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: "v2.7.1"
     hooks:
       - id: prettier
+        exclude_types: [python]

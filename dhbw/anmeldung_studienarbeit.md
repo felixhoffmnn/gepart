@@ -1,8 +1,8 @@
 # Studienarbeitsthema
 
 - [Studienarbeitsthema](#studienarbeitsthema)
-    - [Problemstellung und Ziel der Arbeit](#problemstellung-und-ziel-der-arbeit)
-    - [Geplantes Vorgehen](#geplantes-vorgehen)
+  - [Problemstellung und Ziel der Arbeit](#problemstellung-und-ziel-der-arbeit)
+  - [Geplantes Vorgehen](#geplantes-vorgehen)
 
 ## Problemstellung und Ziel der Arbeit
 
@@ -24,9 +24,9 @@ Zunächst werden die Nachrichtenplattformen anhand einer wissenschaftlichen Meth
 
 Folgend ist einige Literatur gelistet, welche NLP und Fake News Detection behandeln.
 
--   Lorem Ipsum
+- Lorem Ipsum
 
 Methodik:
 
--   Crisp
+- Crisp
 -
