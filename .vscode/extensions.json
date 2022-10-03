@@ -4,6 +4,9 @@
     "esbenp.prettier-vscode",
     "wayou.vscode-todo-highlight",
     "yzhang.markdown-all-in-one",
-    "seatonjiang.gitmoji-vscode"
+    "seatonjiang.gitmoji-vscode",
+    "streetsidesoftware.code-spell-checker",
+    "adpyke.codesnap",
+    "streetsidesoftware.code-spell-checker-german"
   ]
 }
