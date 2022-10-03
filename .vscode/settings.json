@@ -1,18 +1,19 @@
 {
   "cSpell.language": "en, de-de, lorem-ipsum, python",
   "cSpell.words": [
+    "autofix",
     "autorefs",
     "dhbw",
-    "isort",
     "DHBW",
     "docstrings",
     "fontawesome",
     "Hoffmann",
+    "isort",
     "kontakt",
     "linkedin",
     "mkdocs",
-    "mypy",
     "mkdocstrings",
+    "mypy",
     "pytests",
     "Studienarbeit",
     "wontfix"

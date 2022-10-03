@@ -1,4 +1,7 @@
-# TODO: Add CI section
+ci:
+  autofix_commit_msg: "[pre-commit.ci] auto fixes from pre-commit.com hooks"
+  autofix_prs: true
+
 repos:
   - repo: local
     hooks:
@@ -52,3 +55,9 @@ repos:
     hooks:
       - id: prettier
         exclude_types: [python]
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.38.2
+    hooks:
+      - id: pyupgrade
+        args: [--py310-plus]
