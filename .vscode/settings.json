@@ -14,7 +14,9 @@
     "mkdocs",
     "mkdocstrings",
     "mypy",
+    "pytest",
     "pytests",
+    "pyupgrade",
     "Studienarbeit",
     "wontfix"
   ],
