@@ -1,6 +1,23 @@
 {
   "cSpell.language": "en, de-de, lorem-ipsum, python",
-  "cSpell.words": ["DHBW", "isort", "mkdocs", "mypy", "pipenv", "pytest", "Studienarbeit"],
+  "cSpell.words": [
+    "autorefs",
+    "dhbw",
+    "isort",
+    "DHBW",
+    "docstrings",
+    "fontawesome",
+    "Hoffmann",
+    "kontakt",
+    "linkedin",
+    "mkdocs",
+    "mypy",
+    "mkdocstrings",
+    "pytests",
+    "Studienarbeit",
+    "wontfix"
+  ],
+  "cSpell.ignorePaths": [".git", ".vscode"],
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[python]": {
