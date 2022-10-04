@@ -1,18 +1,24 @@
 {
-  "cSpell.language": "en,de-de",
+  "cSpell.language": "en, de-de, lorem-ipsum, python",
   "cSpell.words": [
+    "autofix",
     "autorefs",
     "dhbw",
     "DHBW",
     "docstrings",
     "fontawesome",
     "Hoffmann",
+    "isort",
     "kontakt",
     "linkedin",
     "mkdocs",
     "mkdocstrings",
+    "mypy",
+    "pytest",
     "pytests",
-    "Studienarbeit"
+    "pyupgrade",
+    "Studienarbeit",
+    "wontfix"
   ],
   "cSpell.ignorePaths": [".git", ".vscode"],
   "editor.formatOnSave": true,
