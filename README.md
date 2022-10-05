@@ -1,3 +1,8 @@
+| [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit) | [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier) | [![codecov](https://codecov.io/gh/felixhoffmnn/studienarbeit/branch/main/graph/badge.svg?token=F5XAXPXJE9)](https://codecov.io/gh/felixhoffmnn/studienarbeit) |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+
+---
+
 # PoliAna: Nachrichten und Politikanalyse mittels Natural Language Processing
 
 - [PoliAna: Nachrichten und Politikanalyse mittels Natural Language Processing](#poliana-nachrichten-und-politikanalyse-mittels-natural-language-processing)
@@ -12,8 +17,8 @@ Excepteur ea eiusmod adipisicing dolor do qui mollit tempor. Tempor sit cillum i
 
 ## Get started
 
-<!-- TODO: Edit list -->
-
-1. Run `poetry install` to install all dependencies (even the ones for development)
+1. Install [Poetry](https://python-poetry.org/docs/#installation)
+   - Poetry is a dependency manager for Python used in this project
+2. Run `poetry install` to install all dependencies
    - Afterwards, run `poetry shell` to activate the virtual environment
-2. Install the pre-commit hooks with `poetry run pre-commit install`
+3. Install the pre-commit hooks with `poetry run pre-commit install`
