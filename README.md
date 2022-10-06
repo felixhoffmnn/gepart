@@ -1,3 +1,8 @@
+| [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit) | [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier) | [![codecov](https://codecov.io/gh/felixhoffmnn/studienarbeit/branch/main/graph/badge.svg?token=F5XAXPXJE9)](https://codecov.io/gh/felixhoffmnn/studienarbeit) | [![Documentation Status](https://readthedocs.org/projects/studienarbeit/badge/?version=latest)](https://studienarbeit.readthedocs.io/en/latest/?badge=latest) |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+
+---
+
 # PoliAna: Nachrichten und Politikanalyse mittels Natural Language Processing
 
 - [PoliAna: Nachrichten und Politikanalyse mittels Natural Language Processing](#poliana-nachrichten-und-politikanalyse-mittels-natural-language-processing)
