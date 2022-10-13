@@ -1,0 +1,24 @@
+{
+  "language": "en, de-de, lorem-ipsum, python",
+  "words": [
+    "autofix",
+    "autorefs",
+    "dhbw",
+    "DHBW",
+    "docstrings",
+    "fontawesome",
+    "Hoffmann",
+    "isort",
+    "kontakt",
+    "linkedin",
+    "mkdocs",
+    "mkdocstrings",
+    "mypy",
+    "pytest",
+    "pytests",
+    "pyupgrade",
+    "Studienarbeit",
+    "wontfix"
+  ],
+  "ignorePaths": [".git", ".vscode"]
+}
