@@ -5,6 +5,14 @@
 # Required
 version: 2
 
+python:
+  install:
+    - requirements: requirements.txt
+    - requirements: docs/requirements.txt
+    - method: pip
+      path: .
+  system_packages: true
+
 # Set the version of Python and other tools you might need
 build:
   os: ubuntu-22.04
@@ -13,8 +21,4 @@ build:
 
 mkdocs:
   configuration: mkdocs.yaml
-
-# Optionally declare the Python requirements required to build your docs
-python:
-  install:
-    - requirements: requirements.txt
+  fail_on_warning: false
