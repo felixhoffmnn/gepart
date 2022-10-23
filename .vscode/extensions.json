@@ -2,11 +2,11 @@
   "recommendations": [
     "ms-toolsai.jupyter",
     "esbenp.prettier-vscode",
-    "yzhang.markdown-all-in-one",
     "seatonjiang.gitmoji-vscode",
     "streetsidesoftware.code-spell-checker",
-    "adpyke.codesnap",
     "streetsidesoftware.code-spell-checker-german",
-    "Gruntfuggly.todo-tree"
+    "gruntfuggly.todo-tree",
+    "donjayamanne.python-extension-pack",
+    "tamasfe.even-better-toml"
   ]
 }

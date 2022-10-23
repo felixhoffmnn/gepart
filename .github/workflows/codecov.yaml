@@ -2,7 +2,7 @@ name: Measure Code Coverage
 
 on:
   push:
-    branches: ["main", "github"]
+    branches: ["*"]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: ["main"]
@@ -13,14 +13,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v4
+      - name: Install Poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v2
-        with:
-          poetry-version: 1.2.1
+          cache: "poetry"
       - name: Install dependencies using Poetry
         run: poetry install
       - name: Run tests and collect coverage
@@ -33,6 +31,5 @@ jobs:
           directory: ./coverage/reports/
           env_vars: OS,PYTHON
           files: ./coverage.xml
-          flags: unittests
           fail_ci_if_error: true
           verbose: true
