@@ -17,8 +17,8 @@ Excepteur ea eiusmod adipisicing dolor do qui mollit tempor. Tempor sit cillum i
 
 ## Get started
 
-<!-- TODO: Edit list -->
-
-1. Run `poetry install` to install all dependencies (even the ones for development)
+1. Install [Poetry](https://python-poetry.org/docs/#installation)
+   - Poetry is a dependency manager for Python used in this project
+2. Run `poetry install` to install all dependencies
    - Afterwards, run `poetry shell` to activate the virtual environment
-2. Install the pre-commit hooks with `poetry run pre-commit install`
+3. Install the pre-commit hooks with `poetry run pre-commit install`
