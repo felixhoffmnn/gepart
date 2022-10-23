@@ -16,17 +16,17 @@ repos:
 
       - id: poetry-lock
         name: lock poetry (poetry-lock)
-        always_run: true
+        files: "pyproject.toml"
 
       - id: poetry-export
         name: export poetry normal and dev (poetry-export)
         args: ["--with=dev", "-f", "requirements.txt", "-o", "requirements.txt"]
-        always_run: true
+        files: "poetry.lock"
 
       - id: poetry-export
         name: export poetry docs (poetry-export)
         args: ["--only=docs", "-f", "requirements.txt", "-o", "docs/requirements.txt"]
-        always_run: true
+        files: "poetry.lock"
 
   - repo: https://github.com/pycqa/isort
     rev: 5.10.1
@@ -99,5 +99,5 @@ repos:
       - id: pyupgrade
         name: upgrade pre-commit (pyupgrade)
         stages: [commit, push]
-        args: [--py310-plus]
+        args: [--py38-plus]
         always_run: true
