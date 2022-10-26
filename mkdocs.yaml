@@ -21,7 +21,7 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          paths: [src]
+          paths: [studienarbeit]
           import:
             - https://docs.python.org/3/objects.inv
             - https://mkdocstrings.github.io/objects.inv

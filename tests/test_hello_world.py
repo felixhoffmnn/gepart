@@ -1,4 +1,4 @@
-from src.hello_word import hello_word
+from studienarbeit.hello_word import hello_word
 
 
 def test_hello_world():
