@@ -192,3 +192,7 @@ cython_debug/
 
 ### Custom ###
 data/replication
+.python-version
+*.feather
+*.pkl
+*.parquet

@@ -3,7 +3,7 @@
 </h1>
 
 <h4 align="center">
-  Nachrichten und Politikanalyse mittels Natural Language Processing
+  News and Political Analysis Using Natural Language Processing
 </h4>
 
 <div align="center">
@@ -11,27 +11,20 @@
     <img src="https://img.shields.io/github/license/felixhoffmnn/studienarbeit"
       alt="License: MIT" />
   </a>
-  <a href="https://www.python.org/downloads/release/python-3100/">
-    <img src="https://img.shields.io/badge/python-3.10-blue.svg"
+  <a href="https://www.python.org/downloads/release/python-3110/">
+    <img src="https://img.shields.io/badge/python-3.11-blue.svg"
       alt="Python 3.10" />
   </a>
   <a href="https://github.com/prettier/prettier">
     <img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square"
       alt="Codestyle: Prettier" />
   </a>
-  <!-- <a href="https://github.com/pre-commit/pre-commit">
-    <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"
-      alt="pre-commit" />
-  </a> -->
   <a href="https://results.pre-commit.ci/latest/github/felixhoffmnn/studienarbeit/main">
     <img src="https://results.pre-commit.ci/badge/github/felixhoffmnn/studienarbeit/main.svg"
       alt="pre-commit CI" />
   </a>
-  <a href="https://app.codecov.io/gh/felixhoffmnn/studienarbeit" >
-    <img src="https://codecov.io/gh/felixhoffmnn/studienarbeit/branch/main/graph/badge.svg?token=F5XAXPXJE9" alt="Code coverage"/>
-  </a>
   <a href="https://studienarbeit.readthedocs.io/en/latest/?badge=latest" >
-    <img src="https://readthedocs.org/projects/studienarbeit/badge/?version=latest" alt="Code coverage"/>
+    <img src="https://readthedocs.org/projects/studienarbeit/badge/?version=latest" alt="Documentation"/>
   </a>
 </div>
 <br>
@@ -48,11 +41,6 @@ Excepteur ea eiusmod adipisicing dolor do qui mollit tempor. Tempor sit cillum i
    - Afterwards, run `poetry shell` to activate the virtual environment
 3. Install the pre-commit hooks with `poetry run pre-commit install`
 
-## :warning: Known Issues
-
-1. Poetry environment is not shown in VSCode
-   - See https://crapts.org/2020/05/11/use-poetry-for-python-dependency-management-with-visual-studio-code/ for a solution
-
 ## :memo: License
 
-This project is licensed under [MIT](https://github.com/felixhoffmnn/studienarbeit/blob/main/LICENSE).
+This project is licensed under [MIT](LICENSE).
