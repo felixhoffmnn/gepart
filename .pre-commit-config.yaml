@@ -17,16 +17,6 @@ repos:
         name: Lock poetry (poetry-lock)
         files: "pyproject.toml"
 
-      # - id: poetry-export
-      #   name: export poetry normal and dev (poetry-export)
-      #   args: ["--with=dev", "-f", "requirements.txt", "-o", "requirements.txt"]
-      #   files: "poetry.lock"
-
-      - id: poetry-export
-        name: Export poetry docs (poetry-export)
-        args: ["--only=docs", "-f", "requirements.txt", "-o", "docs/requirements.txt"]
-        files: "poetry.lock"
-
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
