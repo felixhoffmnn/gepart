@@ -196,3 +196,5 @@ data/replication
 *.feather
 *.pkl
 *.parquet
+**/out/*
+!**/out/*.pdf
