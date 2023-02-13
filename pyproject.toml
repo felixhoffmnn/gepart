@@ -13,6 +13,7 @@ classifiers = [
 ]
 license = "MIT"
 readme = "README.md"
+packages = [{ include = "studienarbeit" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -26,6 +27,8 @@ nltk = "^3.8.1"
 spacy = "^3.5.0"
 de-core-news-md = {url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_md-3.5.0/de_core_news_md-3.5.0.tar.gz"}
 polars = "^0.16.2"
+python-dotenv = "^0.21.1"
+pandarallel = "^1.6.4"
 
 [tool.poetry.group.dev.dependencies]
 black = { extras = ["jupyter"], version = "^22.8.0" }

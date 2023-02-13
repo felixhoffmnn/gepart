@@ -4,7 +4,6 @@ import nltk
 import spacy
 from loguru import logger
 
-
 class CleanText:
     """This class provides various methods to clean texts and tweets
 
@@ -14,16 +13,13 @@ class CleanText:
     """
 
     def __init__(self) -> None:
-        """In order to clear the tweets some models and lists are needed which gets loaded within the constructor"""
-        # Load nltk sets of stopwords
+        """In order to clean text some models and lists are needed which gets loaded within the constructor"""
         nltk.download("stopwords")
         nltk.download("punkt")
         self.stopwords_ger = set(nltk.corpus.stopwords.words("german"))
+        self.spacy_nlp_ger = spacy.load("de_core_news_md", exclude=["tagger", "morphologizer", "parser", "senter", "ner"]) # Try senter
 
-        # Load spacy models for german
-        self.spacy_nlp_ger = spacy.load("de_core_news_md")
-
-        logger.info("Initialized CleanTweets class.")
+        logger.debug("Initialized CleanText class.")
 
     def clean_text(self, text: str, isTweet: bool) -> str:
         """Receives a text and removes all special characters, icons and usernames and returns the cleaned text
@@ -49,7 +45,7 @@ class CleanText:
         logger.debug("Text cleaned.")
         return temp
 
-    def stemm_text(self, clean_text: str) -> str:
+    def stemm_text(self, clean_text: str) -> list[str]:
         """Takes a text and stems each word
 
         Parameters
@@ -59,34 +55,14 @@ class CleanText:
 
         Returns
         -------
-        str
-            The stemmed text
+        list[str]
+            The stemmed tokens
         """
         spacy_doc = self.spacy_nlp_ger(clean_text)
         stemmed_tokens = [token.lemma_ for token in spacy_doc]
-        stemmed_text = " ".join(stemmed_tokens)
 
         logger.debug("Text stemmed.")
-        return stemmed_text
-
-    def tokenize_text(self, stemm_text: str) -> list[str]:
-        """Takes a tweet and splits them into tokens
-
-        Parameters
-        ----------
-        stemm_text : str
-            The text which should be already cleaned and stemmed
-
-        Returns
-        -------
-        list[str]
-            A list with all tokens of the text
-        """
-        tokens: list[str] = nltk.word_tokenize(stemm_text)
-        tokens = [token.strip() for token in tokens]
-
-        logger.debug("Text tokenized.")
-        return tokens
+        return stemmed_tokens
 
     def remove_stopwords(self, tokenize_text: list[str]) -> list[str]:
         """Using the list of tokens all stopwords are being removed and the remaining tokens are joined together
@@ -122,8 +98,7 @@ class CleanText:
         """
         text_clean = self.clean_text(text, isTweet)
         stemmed_text = self.stemm_text(text_clean)
-        tokenized_text = self.tokenize_text(stemmed_text)
-        removed_stopwords = self.remove_stopwords(tokenized_text)
+        removed_stopwords = self.remove_stopwords(stemmed_text)
 
         logger.debug("Tweet cleaned!")
         return (text_clean, removed_stopwords)
