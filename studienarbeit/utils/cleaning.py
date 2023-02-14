@@ -69,7 +69,7 @@ class CleanText:
 
         Parameters
         ----------
-        tokenize_text (list[str]): The tokens of the tweet
+        tokenize_text (list[str]): The tokens of the text
 
         Returns
         -------
@@ -94,11 +94,11 @@ class CleanText:
         Returns
         -------
         list[str]
-            A List with all tokens of the tweet except the stopwords
+            A List with all tokens of the text except the stopwords
         """
         text_clean = self.clean_text(text, isTweet)
         stemmed_text = self.stemm_text(text_clean)
         removed_stopwords = self.remove_stopwords(stemmed_text)
 
-        logger.debug("Tweet cleaned!")
+        logger.debug("Text cleaned!")
         return (text_clean, removed_stopwords)
