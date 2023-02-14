@@ -13,8 +13,8 @@ link-citations: true
 book: true
 classoption: [oneside]
 header-includes: |
-    \usepackage{graphicx}
-    \usepackage{tikz}
+  \usepackage{graphicx}
+  \usepackage{tikz}
 ---
 
 # Kurzbeschreibung der Arbeit
@@ -34,12 +34,12 @@ Ziel dieser Arbeit ist es, mittels Natural Language Processing und Machine Learn
 
 Mögliche Fragestellungen sind für diese Arbeit sind:
 
--   Lassen sich Trends in der Semantik einzelner Politiker feststellen?
--   Ist es möglich, auf Basis der Semantik festzustellen, ob ein Politiker zum Flügel einer Partei gehört?
--   Können Politiker anhand ihrer Nachrichten und Daten klassifiziert werden?
--   Wie stark ist die Übereinstimmung der Klassifikation mit der wahrhaftigen Parteizugehörigkeit?
--   Unterstützen Nutzer ebenfalls die Politiker, welche am nächsten an ihrer Meinung sind?
--   Lässt sich die Parteizugehörigkeit aufgrund einzelner Worte oder Phrasen bestimmen?
+- Lassen sich Trends in der Semantik einzelner Politiker feststellen?
+- Ist es möglich, auf Basis der Semantik festzustellen, ob ein Politiker zum Flügel einer Partei gehört?
+- Können Politiker anhand ihrer Nachrichten und Daten klassifiziert werden?
+- Wie stark ist die Übereinstimmung der Klassifikation mit der wahrhaftigen Parteizugehörigkeit?
+- Unterstützen Nutzer ebenfalls die Politiker, welche am nächsten an ihrer Meinung sind?
+- Lässt sich die Parteizugehörigkeit aufgrund einzelner Worte oder Phrasen bestimmen?
 
 # Gliederung und Zeitplan
 
@@ -50,36 +50,36 @@ Kapiteln und Unterkapiteln. Dies gilt als Leitfaden, noch nicht als abschließen
 
 Als erste Gliederung der Arbeit kann die folgende Struktur angenommen werden:
 
--   Einleitung
-    -   Problemstellung
-    -   Zielsetzung
-    -   Methodik
-    -   Struktur der Arbeit
--   Grundlagen
-    -   Politikapparat und Parteienlandschaft
-    -   Erörterung, welche Medienplattformen und Nachrichtenquellen verwendet werden sollen
-    -   Auswahl von Quellen und Sammeln von Daten
-    -   NLP-Pipeline
-    -   Machine Learning / Clustering
--   Datenbeschaffung und -analyse nach CRISP-DM
-    -   _Business Understanding_
-        -   Festlegung auf spezifische Ereignisse, die näher untersucht werden sollen
-    -   _Data Understanding_
-        -   Identifizieren von geeigneten Nachrichtenquellen
-        -   Sammeln der Trainingsdaten aus verschiedenen Quellen
-    -   _Data Preparation_
-    -   _Modeling_ (Unterteilung in verschiedene Thesen und Analysen)
-        1. Trainieren eines NLP-Modells, das Texte nach Parteien klassifiziert
-        2. Analysieren von Nachrichten und Tweets zu ausgewählten Ereignissen
-    -   _Evaluation_
-        -   Vergleich und Evaluation der trainierten Modelle
-        -   Mathematische Betrachtung der Ergebnisse zur Trenddetektion
-    -   _Deployment_
-        -   Bereitstellung des besten Modells für die weiteren Analysen
-        -   (grafische) Darstellung der Analyseergebnisse
--   Fazit
-    -   Zusammenfassung
-    -   Ausblick
+- Einleitung
+  - Problemstellung
+  - Zielsetzung
+  - Methodik
+  - Struktur der Arbeit
+- Grundlagen
+  - Politikapparat und Parteienlandschaft
+  - Erörterung, welche Medienplattformen und Nachrichtenquellen verwendet werden sollen
+  - Auswahl von Quellen und Sammeln von Daten
+  - NLP-Pipeline
+  - Machine Learning / Clustering
+- Datenbeschaffung und -analyse nach CRISP-DM
+  - _Business Understanding_
+    - Festlegung auf spezifische Ereignisse, die näher untersucht werden sollen
+  - _Data Understanding_
+    - Identifizieren von geeigneten Nachrichtenquellen
+    - Sammeln der Trainingsdaten aus verschiedenen Quellen
+  - _Data Preparation_
+  - _Modeling_ (Unterteilung in verschiedene Thesen und Analysen)
+    1. Trainieren eines NLP-Modells, das Texte nach Parteien klassifiziert
+    2. Analysieren von Nachrichten und Tweets zu ausgewählten Ereignissen
+  - _Evaluation_
+    - Vergleich und Evaluation der trainierten Modelle
+    - Mathematische Betrachtung der Ergebnisse zur Trenddetektion
+  - _Deployment_
+    - Bereitstellung des besten Modells für die weiteren Analysen
+    - (grafische) Darstellung der Analyseergebnisse
+- Fazit
+  - Zusammenfassung
+  - Ausblick
 
 Der Hauptteil der Arbeit wird nach dem CRISP-DM Prozessmodell aufgebaut. Die einzelnen Schritte stellen dabei die wesentlichen Meilensteine dar, die während des Projekts erreicht werden sollen.
 
