@@ -4,6 +4,7 @@ import nltk
 import spacy
 from loguru import logger
 
+
 class CleanText:
     """This class provides various methods to clean texts and tweets
 
@@ -17,11 +18,43 @@ class CleanText:
         nltk.download("stopwords")
         nltk.download("punkt")
         self.stopwords_ger = set(nltk.corpus.stopwords.words("german"))
-        self.spacy_nlp_ger = spacy.load("de_core_news_md", exclude=["tagger", "morphologizer", "parser", "senter", "ner"]) # Try senter
+        self.spacy_nlp_ger = spacy.load(
+            "de_core_news_md", exclude=["tagger", "morphologizer", "parser", "senter", "ner"]
+        )
+
+        self.clean_chars = re.compile(r"[^A-Za-züöäÖÜÄß ]", re.MULTILINE)
+        self.clean_http_urls = re.compile(r"https*\S+", re.MULTILINE)
+        self.clean_at_mentions = re.compile(r"@\S+", re.MULTILINE)
 
         logger.debug("Initialized CleanText class.")
 
-    def clean_text(self, text: str, isTweet: bool) -> str:
+    # def replace_numbers(self, text: str) -> str:
+    #     """Replaces numbers with their german equivalent
+
+    #     Parameters
+    #     ----------
+    #     text : str
+    #         The text which should be cleaned
+
+    #     Returns
+    #     -------
+    #     str
+    #         The cleaned text
+    #     """
+    #     return (
+    #         text.replace("0", " null")
+    #         .replace("1", " eins")
+    #         .replace("2", " zwei")
+    #         .replace("3", " drei")
+    #         .replace("4", " vier")
+    #         .replace("5", " fünf")
+    #         .replace("6", " sechs")
+    #         .replace("7", " sieben")
+    #         .replace("8", " acht")
+    #         .replace("9", " neun")
+    #     )
+
+    def clean_text(self, text: str) -> str:
         """Receives a text and removes all special characters, icons and usernames and returns the cleaned text
 
         Parameters
@@ -36,14 +69,16 @@ class CleanText:
         str
             The cleaned text
         """
-        temp = text.lower()
-        if isTweet:
-            temp = re.sub(r"@[A-Za-z0-9_]+|#[A-Za-z0-9_]+|'", "", temp)
-            temp = re.sub(r"http[s]?:\/\/\S+|[^\w]\s+", " ", temp)
-        temp = temp.strip()
+        text = text.replace("\n", " ")
+        text = self.clean_http_urls.sub("", text)
+        text = self.clean_at_mentions.sub("", text)
+        # text = self.replace_numbers(text)
+        text = self.clean_chars.sub("", text)
+        text = " ".join(text.split())
+        text = text.strip().lower()
 
         logger.debug("Text cleaned.")
-        return temp
+        return text
 
     def stemm_text(self, clean_text: str) -> list[str]:
         """Takes a text and stems each word
@@ -81,22 +116,20 @@ class CleanText:
         logger.debug("Stopwords removed.")
         return filtered_tokens
 
-    def pipeline(self, text: str, isTweet: bool) -> tuple[str, list[str]]:
+    def pipeline(self, text: str) -> tuple[str, list[str]]:
         """A pipeline in order to combine all methods in order to clean a text
 
         Parameters
         ----------
         text : str
             The text which should be cleaned and tokenized
-        isTweet : bool
-            A boolean which indicates if the text is a tweet or not
 
         Returns
         -------
         list[str]
             A List with all tokens of the text except the stopwords
         """
-        text_clean = self.clean_text(text, isTweet)
+        text_clean = self.clean_text(text)
         stemmed_text = self.stemm_text(text_clean)
         removed_stopwords = self.remove_stopwords(stemmed_text)
 

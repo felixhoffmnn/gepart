@@ -1,0 +1,5 @@
+outs:
+- md5: 919b7d93ad09159ef472b2dc0fe884cc
+  size: 120079895
+  isexec: true
+  path: tweets.parquet
