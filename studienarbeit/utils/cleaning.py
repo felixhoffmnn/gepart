@@ -5,7 +5,7 @@ import spacy
 from loguru import logger
 
 
-class CleanText:
+class Cleaning:
     """This class provides various methods to clean texts and tweets
 
     Source
@@ -28,31 +28,31 @@ class CleanText:
 
         logger.debug("Initialized CleanText class.")
 
-    # def replace_numbers(self, text: str) -> str:
-    #     """Replaces numbers with their german equivalent
+    def replace_numbers(self, text: str) -> str:
+        """Replaces numbers with their german equivalent
 
-    #     Parameters
-    #     ----------
-    #     text : str
-    #         The text which should be cleaned
+        Parameters
+        ----------
+        text : str
+            The text which should be cleaned
 
-    #     Returns
-    #     -------
-    #     str
-    #         The cleaned text
-    #     """
-    #     return (
-    #         text.replace("0", " null")
-    #         .replace("1", " eins")
-    #         .replace("2", " zwei")
-    #         .replace("3", " drei")
-    #         .replace("4", " vier")
-    #         .replace("5", " fünf")
-    #         .replace("6", " sechs")
-    #         .replace("7", " sieben")
-    #         .replace("8", " acht")
-    #         .replace("9", " neun")
-    #     )
+        Returns
+        -------
+        str
+            The cleaned text
+        """
+        return (
+            text.replace("0", " null")
+            .replace("1", " eins")
+            .replace("2", " zwei")
+            .replace("3", " drei")
+            .replace("4", " vier")
+            .replace("5", " fünf")
+            .replace("6", " sechs")
+            .replace("7", " sieben")
+            .replace("8", " acht")
+            .replace("9", " neun")
+        )
 
     def clean_text(self, text: str) -> str:
         """Receives a text and removes all special characters, icons and usernames and returns the cleaned text
@@ -72,7 +72,7 @@ class CleanText:
         text = text.replace("\n", " ")
         text = self.clean_http_urls.sub("", text)
         text = self.clean_at_mentions.sub("", text)
-        # text = self.replace_numbers(text)
+        text = self.replace_numbers(text)
         text = self.clean_chars.sub("", text)
         text = " ".join(text.split())
         text = text.strip().lower()
