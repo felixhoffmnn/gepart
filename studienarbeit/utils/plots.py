@@ -40,7 +40,7 @@ class Plots:
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
 
-    def word_count(self, df: pd.DataFrame, column="word_count", title="Wortanzahl", x_lim=100):
+    def word_count(self, df: pd.DataFrame, column="stemm_word_count", title="Wortanzahl", x_lim=100):
         fig, axs = plt.subplots(1, 2)
 
         sns.kdeplot(data=df, x=column, hue="party", palette=self.color_palette, ax=axs[0])
