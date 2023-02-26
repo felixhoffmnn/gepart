@@ -25,7 +25,7 @@ openpyxl = "^3.0.10"
 seaborn = "^0.12.2"
 nltk = "^3.8.1"
 spacy = "^3.5.0"
-de-core-news-md = {url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_md-3.5.0/de_core_news_md-3.5.0.tar.gz"}
+de-core-news-lg = {url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_lg-3.5.0/de_core_news_lg-3.5.0.tar.gz"}
 polars = "^0.16.2"
 python-dotenv = "^0.21.1"
 pandarallel = "^1.6.4"
@@ -40,6 +40,10 @@ ipywidgets = "^7.7.1"
 spacy-sentiws = "^3.0.0"
 torch = "^1.13.1"
 jupyter-contrib-nbextensions = "^0.7.0"
+num2words = "^0.5.12"
+lazypredict = "^0.2.12"
+pybind11 = "^2.10.3"
+fasttext = {git = "https://github.com/cfculhane/fastText"}
 
 [tool.poetry.group.dev.dependencies]
 black = { extras = ["jupyter"], version = "^22.8.0" }

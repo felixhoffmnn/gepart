@@ -11,21 +11,26 @@ class Plots:
     TODO: Plot count per day per party
     """
 
-    def __init__(self):
+    def __init__(self, document_type: str):
         self.color_palette = "muted"
         sns.set(style="white", palette=self.color_palette, rc={"figure.figsize": (20, 8)})
         self.line_kws = {"color": "r", "alpha": 0.7, "lw": 5}
 
-    def party_count(self, df: pd.DataFrame, column="party", title="Parteien"):
+        self.document_type = document_type
+
+    def _compose_title(self, title: str):
+        return f"{title} ({self.document_type})"
+
+    def party_count(self, df: pd.DataFrame, column="party", title="Anzahl an Einträgen pro Partei"):
         fig, axs = plt.subplots()
 
         sns.countplot(x=column, data=df, ax=axs)
 
-        fig.suptitle(title)
+        fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
 
-    def sentiment(self, df: pd.DataFrame, column="sentiment", title="Sentiment"):
+    def sentiment(self, df: pd.DataFrame, column="sentiment", title="Sentimentverteilung pro Partei"):
         fig, axs = plt.subplots()
 
         sns.barplot(
@@ -36,17 +41,17 @@ class Plots:
             ax=axs,
         )
 
-        fig.suptitle(title)
+        fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
 
-    def word_count(self, df: pd.DataFrame, column="stemm_word_count", title="Wortanzahl", x_lim=100):
+    def word_count(self, df: pd.DataFrame, column="lemma_word_count", title="Wortanzahl pro Partei", x_lim=100):
         fig, axs = plt.subplots(1, 2)
 
         sns.kdeplot(data=df, x=column, hue="party", palette=self.color_palette, ax=axs[0])
         sns.boxenplot(data=df, x="party", y=column, ax=axs[1])
 
-        fig.suptitle(title)
+        fig.suptitle(self._compose_title(title))
         axs[0].set_xlabel("Wortanzahl")
         axs[0].set_ylabel("Anzahl")
         axs[0].set_xlim(0, x_lim)
@@ -58,7 +63,7 @@ class Plots:
 
         sns.countplot(data=df, x="party", hue=column, ax=axs)
 
-        fig.suptitle(title)
+        fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
         axs.legend(title="Geschlecht")
@@ -66,8 +71,8 @@ class Plots:
     def user_count(self, df: pd.DataFrame, column="screen_name", title="Anzahl der Nutzer pro Partei"):
         fig, axs = plt.subplots()
 
-        sns.barplot(df.groupby("party")[column].nunique().reset_index(name="count"), x="party", y="count", ax=axs)
+        sns.barplot(data=df.groupby("party")[column].nunique().reset_index(name="count"), x="party", y="count", ax=axs)
 
-        fig.suptitle(title)
+        fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl der Nutzer")
