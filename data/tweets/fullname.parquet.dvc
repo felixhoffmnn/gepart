@@ -1,0 +1,5 @@
+outs:
+- md5: a5118147d832340ddc0cd5f29232b9b1
+  size: 634646
+  isexec: true
+  path: fullname.parquet

@@ -1,0 +1,4 @@
+outs:
+- md5: c8623fcda89d36159da27ad64fbb199a
+  size: 1818
+  path: electoral_terms.feather

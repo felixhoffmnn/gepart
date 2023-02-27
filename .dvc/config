@@ -1,0 +1,6 @@
+[core]
+    remote = felix_drive
+    autostage = true
+['remote "felix_drive"']
+    url = gdrive://1-jR9Yh9B5qJkUohcnZv0VIhjEj7ocJ68
+    gdrive_acknowledge_abuse = true
