@@ -1,0 +1,4 @@
+outs:
+- md5: 11fdd6000f335bad9b40ca34eae822b2
+  size: 57159866
+  path: contributions_simplified.feather
