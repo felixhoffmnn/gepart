@@ -196,5 +196,8 @@ data/replication
 *.feather
 *.pkl
 *.parquet
+data/party_programs/*
+data/speeches/*
 **/out/*
 !**/out/*.pdf
+.DS_Store

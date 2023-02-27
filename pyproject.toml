@@ -16,7 +16,7 @@ readme = "README.md"
 packages = [{ include = "studienarbeit" }]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 loguru = "^0.6.0"
 pandas = "^1.5.0"
 numpy = "^1.23.3"
@@ -25,10 +25,18 @@ openpyxl = "^3.0.10"
 seaborn = "^0.12.2"
 nltk = "^3.8.1"
 spacy = "^3.5.0"
-de-core-news-md = {url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_md-3.5.0/de_core_news_md-3.5.0.tar.gz"}
+de-core-news-md = { url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_md-3.5.0/de_core_news_md-3.5.0.tar.gz" }
 polars = "^0.16.2"
 python-dotenv = "^0.21.1"
 pandarallel = "^1.6.4"
+pdfminer-six = "^20220524"
+textblob-de = "^0.4.3"
+transformers = "^4.26.1"
+# torch = [
+#   { markers = "sys_platform == 'macos'", url = "https://download.pytorch.org/whl/cpu/torch-1.13.1-cp310-none-macosx_11_0_arm64.whl" },
+#   { markers = "sys_platform == 'linux'", url = "https://download.pytorch.org/whl/torch-1.13.1-cp310-cp310-manylinux2014_aarch64.whl" },
+# ]
+torch = "^1.13.1"
 
 [tool.poetry.group.dev.dependencies]
 black = { extras = ["jupyter"], version = "^22.8.0" }
@@ -39,6 +47,7 @@ flake8 = "^5.0.4"
 autopep8 = "^1.7.0"
 pre-commit = "^2.20.0"
 jupyter = "^1.0.0"
+ipykernel = "^6.21.2"
 
 [tool.mypy]
 mypy_path = 'studienarbeit'
