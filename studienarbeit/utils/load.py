@@ -18,7 +18,6 @@ class Load:
         self.data_dir = Path(data_dir)
 
         if not self.data_dir.exists():
-            logger.error(f"The data directory {self.data_dir} does not exist.")
             raise FileNotFoundError(f"The data directory {self.data_dir} does not exist.")
 
     def load_dataframe(self, file_path: str, columns: list[str] | None = None, file_type: str = "parquet"):
@@ -44,7 +43,6 @@ class Load:
         path = self.data_dir / file_path
 
         if not path.exists():
-            logger.error(f"The file {path} does not exist.")
             raise FileNotFoundError(f"The file {path} does not exist.")
 
         if file_type == "parquet":

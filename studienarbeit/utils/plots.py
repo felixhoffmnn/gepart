@@ -45,14 +45,14 @@ class Plots:
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
 
-    def word_count(self, df: pd.DataFrame, column="lemma_word_count", title="Wortanzahl pro Partei", x_lim=100):
+    def word_count(self, df: pd.DataFrame, column="filter_word_count", title="Wortanzahl pro Partei", x_lim=100):
         fig, axs = plt.subplots(1, 2)
 
         sns.kdeplot(data=df, x=column, hue="party", palette=self.color_palette, ax=axs[0])
         sns.boxenplot(data=df, x="party", y=column, ax=axs[1])
 
         fig.suptitle(self._compose_title(title))
-        axs[0].set_xlabel("Wortanzahl")
+        axs[0].set_xlabel("Wortanzahl (Nach Filterung)")
         axs[0].set_ylabel("Anzahl")
         axs[0].set_xlim(0, x_lim)
         axs[1].set_xlabel("Parteien")

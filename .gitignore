@@ -198,3 +198,7 @@ data/replication
 *.parquet
 **/out/*
 !**/out/*.pdf
+*.bin
+*.vec
+**/train.txt
+**/test.txt
