@@ -5,7 +5,7 @@ from loguru import logger
 
 
 class Load:
-    def __init__(self, data_dir: str = "../../data"):
+    def __init__(self, data_dir: str | Path = "../../data"):
         """Initialize the Load class with the data directory to your data.
         For example, if you want to load the data for the `tweets`, the `data_dir` should be `../../data/tweets`.
         This parameter severs the purpose to reduce the length when loading an individual file.
@@ -15,7 +15,7 @@ class Load:
         data_dir : str, optional
             The directory where your main data is stored. By default `../../data`.
         """
-        self.data_dir = Path(data_dir)
+        self.data_dir = Path(data_dir) if isinstance(data_dir, str) else data_dir
 
         if not self.data_dir.exists():
             raise FileNotFoundError(f"The data directory {self.data_dir} does not exist.")
