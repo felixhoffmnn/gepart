@@ -1,11 +1,18 @@
+from enum import Enum
 from pathlib import Path
 
 import pandas as pd
 from loguru import logger
 
 
+class EDataTypes(str, Enum):
+    TWEETS = "tweets"
+    SPEECHES = "speeches"
+    PARTY_PROGRAMS = "party_programs"
+
+
 class Load:
-    def __init__(self, data_dir: str | Path = "../../data"):
+    def __init__(self, data_type: EDataTypes, data_dir: str | Path = "../../data"):
         """Initialize the Load class with the data directory to your data.
         For example, if you want to load the data for the `tweets`, the `data_dir` should be `../../data/tweets`.
         This parameter severs the purpose to reduce the length when loading an individual file.
@@ -15,7 +22,7 @@ class Load:
         data_dir : str, optional
             The directory where your main data is stored. By default `../../data`.
         """
-        self.data_dir = Path(data_dir) if isinstance(data_dir, str) else data_dir
+        self.data_dir = Path(data_dir) / data_type.value / "dataframes"
 
         if not self.data_dir.exists():
             raise FileNotFoundError(f"The data directory {self.data_dir} does not exist.")
