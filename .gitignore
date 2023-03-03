@@ -200,6 +200,6 @@ data/replication
 !**/out/*.pdf
 *.bin
 *.vec
-**/train.txt
-**/test.txt
+**/train*.txt
+**/test*.txt
 **/cache/
