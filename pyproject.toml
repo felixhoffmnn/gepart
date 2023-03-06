@@ -24,7 +24,7 @@ pyarrow = "^10.0.1"
 openpyxl = "^3.0.10"
 seaborn = "^0.12.2"
 nltk = "^3.8.1"
-spacy = "^3.5.0"
+spacy = {extras = ["cuda12x", "lookups", "transformers"], version = "^3.5.0"}
 de-core-news-lg = {url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_lg-3.5.0/de_core_news_lg-3.5.0.tar.gz"}
 polars = "^0.16.2"
 python-dotenv = "^0.21.1"

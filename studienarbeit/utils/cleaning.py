@@ -5,6 +5,7 @@ import nltk.corpus
 import spacy
 from loguru import logger
 from num2words import num2words
+from thinc.api import prefer_gpu
 
 
 class Cleaning:
@@ -23,6 +24,8 @@ class Cleaning:
         self.spacy_nlp_ger = spacy.load(
             "de_core_news_lg", exclude=["tagger", "morphologizer", "parser", "senter", "ner"]
         )
+
+        logger.info("Using GPU for cleaning." if prefer_gpu() else "Using CPU for cleaning.")
 
         logger.debug("Initialized CleanText class.")
 

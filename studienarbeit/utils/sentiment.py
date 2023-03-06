@@ -1,5 +1,6 @@
 import torch
 import torch.backends.mps
+from loguru import logger
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 
@@ -11,6 +12,8 @@ class Sentiment:
             self.device = "mps"
         else:
             self.device = "cpu"
+
+        logger.info(f"Using {self.device} for sentiment analysis.")
 
         self.model_name = "oliverguhr/german-sentiment-bert"
         self.model = AutoModelForSequenceClassification.from_pretrained(self.model_name)
