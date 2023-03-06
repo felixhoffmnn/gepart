@@ -1,0 +1,4 @@
+outs:
+- md5: c6c55f35dc9059dd29f43787633a2584
+  size: 15092464
+  path: party_programs.parquet

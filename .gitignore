@@ -197,8 +197,10 @@ data/replication
 *.pkl
 *.parquet
 data/party_programs/**/*.pdf
-data/party_programs/**/*.csv
-data/speeches/**/*.csv
 **/out/*
 !**/out/*.pdf
 .DS_Store
+*.bin
+*.vec
+test.txt
+train.txt

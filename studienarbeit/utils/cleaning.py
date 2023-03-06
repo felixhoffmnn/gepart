@@ -24,7 +24,8 @@ class Cleaning:
         )
 
         self.clean_chars = re.compile(r"[^A-Za-züöäÖÜÄß ]", re.MULTILINE)
-        self.clean_http_urls = re.compile(r"http[s]?:\/\/\S+|[^\w]\s+", re.MULTILINE)
+        self.clean_chars_with_punctuation = re.compile(r"[^A-Za-züöäÖÜÄß.,!? ]", re.MULTILINE)
+        self.clean_http_urls = re.compile(r"http[s]?:\/\/\S+|www.\s+", re.MULTILINE)
         self.clean_at_mentions = re.compile(r"@\S+", re.MULTILINE)
 
         logger.debug("Initialized CleanText class.")
@@ -55,15 +56,17 @@ class Cleaning:
             .replace("9", " neun ")
         )
 
-    def clean_text(self, text: str) -> str:
+    def clean_text(self, text: str, keep_punctuation: bool = False, keep_upper: bool = False) -> str:
         """Receives a text and removes all special characters, icons and usernames and returns the cleaned text
 
         Parameters
         ----------
         text : str
             The text which should be cleaned
-        isTweet : bool
-            A boolean which indicates if the text is a tweet or not
+        keep_punctuation : bool
+            A boolean which indicates if punctuation should be kept or not
+        keep_upper : bool
+            A boolean which indicates if upper case letters should be kept or be lowered
 
         Returns
         -------
@@ -74,9 +77,14 @@ class Cleaning:
         text = self.clean_http_urls.sub("", text)
         text = self.clean_at_mentions.sub("", text)
         text = self._replace_numbers(text)
-        text = self.clean_chars.sub("", text)
+        if keep_punctuation:
+            text = self.clean_chars_with_punctuation.sub("", text)
+        else:
+            text = self.clean_chars.sub("", text)
         text = " ".join(text.split())
-        text = text.strip().lower()
+        text = text.strip()
+        if not keep_upper:
+            text = text.lower()
 
         logger.debug("Text cleaned.")
         return text
@@ -95,7 +103,7 @@ class Cleaning:
             The stemmed tokens
         """
         spacy_doc = self.spacy_nlp_ger(text)
-        lemma_tokens = [token.lemma_.lower() for token in spacy_doc]
+        lemma_tokens = [token.lemma_.lower() for token in spacy_doc if token.lemma_ != "--"]
 
         logger.debug("Text stemmed.")
         return lemma_tokens
@@ -116,6 +124,45 @@ class Cleaning:
 
         logger.debug("Stopwords removed.")
         return filtered_text
+
+    def clean_gender(self, text: str, gender_symbols=["*", ":"]) -> str:
+        """Removes 'gegenderte' words from a text
+
+        Parameters
+        ----------
+        text : str
+            The text which should be cleaned
+        gender_symbols : list, optional
+            The symbols used in the text as gender symbols, by default ["*", ":"]
+
+        Returns
+        -------
+        str
+            The cleaned text
+        """
+        for symbol in gender_symbols:
+            text = re.sub(f"([a-zßäöü])\{symbol}innen([a-zßäöü]?)", r"\1\2", text)
+            text = re.sub(f"([a-zßäöü])\{symbol}in([a-zßäöü]?)", r"\1\2", text)
+            text = text.replace(f"Sinti{symbol}zze und Rom{symbol}nja", "Sinti und Roma")
+            text = text.replace(f"der{symbol}die", "der")
+            text = text.replace(f"die{symbol}der", "der")
+            text = text.replace(f"den{symbol}die", "den")
+            text = text.replace(f"dem{symbol}der", "dem")
+            text = text.replace(f"der{symbol}s", "des")
+            text = text.replace(f"eines{symbol}einer", "eines")
+            text = text.replace(f"einer{symbol}s", "eines")
+            text = text.replace(f"ihre{symbol}seine", "seine")
+            text = text.replace(f"seiner{symbol}ihrer", "seiner")
+            text = text.replace(f"jeder{symbol}m", "jedem")
+            text = text.replace(f"Sie{symbol}Er", "Er")
+            text = text.replace(f"des{symbol}der", "des")
+            text = text.replace(f"welchem{symbol}welcher", "welchem")
+            text = text.replace(f"{symbol}r", "r")
+            text = text.replace(f"{symbol}n", "n")
+            text = text.replace(f"{symbol}e", "n")
+
+        logger.debug("Gender removed.")
+        return text
 
     def pipeline(self, text: str) -> tuple[str, list[str], list[str]]:
         """A pipeline in order to combine all methods in order to clean a text
