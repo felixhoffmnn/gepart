@@ -7,33 +7,33 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: Describe the problem
-      description: |
-        Is your feature request related to a problem? Please describe. A clear and concise description of what the problem is.
-      placeholder: Ex. I'm always frustrated when [...]
+      label: Description
+      description: A simple description for what is currently missing or needs to be improved.
     validations:
       required: true
 
   - type: textarea
-    id: solution
+    id: in-scope
     attributes:
-      label: Describe the solution you'd like
-      description: A clear and concise description of what you want to happen.
+      label: 🟢 In Scope
+      description: Please list all tasks required or related to your requested feature.
+      placeholder: "- [] Lorem Ipsum"
     validations:
       required: true
 
   - type: textarea
-    id: alternative
+    id: not-in-scope
     attributes:
-      label: Describe alternatives you've considered
-      description: A clear and concise description of any alternative solutions or features you've considered.
+      label: 🔴 Not in Scope
+      description: What tasks are to large or not related to your requested feature.
+      placeholder: "- _None_"
     validations:
       required: false
 
   - type: textarea
-    id: additional_context
+    id: additional-context
     attributes:
-      label: Additional context
+      label: Additional Context
       description: Add any other context or screenshots about the feature request here.
     validations:
       required: false
