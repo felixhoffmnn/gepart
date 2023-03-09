@@ -1,6 +1,6 @@
 ci:
   autofix_prs: false
-  skip: [poetry-lock]
+  # skip: [poetry-lock]
 
 default_language_version:
   python: python3.11
@@ -13,9 +13,9 @@ repos:
         name: Check poetry (poetry-check)
         always_run: true
 
-      - id: poetry-lock
-        name: Lock poetry (poetry-lock)
-        files: "pyproject.toml"
+      # - id: poetry-lock
+      #   name: Lock poetry (poetry-lock)
+      #   files: "pyproject.toml"
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
