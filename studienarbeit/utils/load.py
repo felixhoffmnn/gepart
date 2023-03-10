@@ -25,7 +25,8 @@ class Load:
         self.data_dir = Path(data_dir) / data_type.value / "dataframes"
 
         if not self.data_dir.exists():
-            raise FileNotFoundError(f"The data directory {self.data_dir} does not exist.")
+            logger.info(f"Creating directory {self.data_dir}")
+            self.data_dir.mkdir(parents=True)
 
     def load_dataframe(self, file_path: str, columns: list[str] | None = None, file_type: str = "parquet"):
         """Load a dataframe from a file.

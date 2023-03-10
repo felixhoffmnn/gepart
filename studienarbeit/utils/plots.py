@@ -1,6 +1,11 @@
+from pathlib import Path
+
 import pandas as pd
 import seaborn as sns
+from loguru import logger
 from matplotlib import pyplot as plt
+
+from studienarbeit.utils.load import EDataTypes
 
 
 class Plots:
@@ -11,15 +16,20 @@ class Plots:
     TODO: Plot count per day per party
     """
 
-    def __init__(self, document_type: str):
+    def __init__(self, data_type: EDataTypes, data_dir: str | Path = "../../data"):
         self.color_palette = "muted"
         sns.set(style="white", palette=self.color_palette, rc={"figure.figsize": (20, 8)})
         self.line_kws = {"color": "r", "alpha": 0.7, "lw": 5}
 
-        self.document_type = document_type
+        self.data_type = data_type.value
+        self.data_dir = Path(data_dir) / "images" / data_type.value
+
+        if not self.data_dir.exists():
+            logger.info(f"Creating directory {self.data_dir}")
+            self.data_dir.mkdir(parents=True)
 
     def _compose_title(self, title: str):
-        return f"{title} ({self.document_type})"
+        return f"{title} ({self.data_type})"
 
     def party_count(self, df: pd.DataFrame, column="party", title="Anzahl an Einträgen pro Partei"):
         fig, axs = plt.subplots()
@@ -29,6 +39,8 @@ class Plots:
         fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
+
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png")
 
     def sentiment(self, df: pd.DataFrame, column="sentiment", title="Sentimentverteilung pro Partei"):
         fig, axs = plt.subplots()
@@ -45,6 +57,8 @@ class Plots:
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
 
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png")
+
     def word_count(self, df: pd.DataFrame, column="filter_word_count", title="Wortanzahl pro Partei", x_lim=100):
         fig, axs = plt.subplots(1, 2)
 
@@ -58,6 +72,8 @@ class Plots:
         axs[1].set_xlabel("Parteien")
         axs[1].set_ylabel("Wortanzahl")
 
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png")
+
     def gender(self, df: pd.DataFrame, column="gender", title="Geschlechterverteilung pro Partei"):
         fig, axs = plt.subplots()
 
@@ -68,6 +84,8 @@ class Plots:
         axs.set_ylabel("Anzahl")
         axs.legend(title="Geschlecht")
 
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png")
+
     def user_count(self, df: pd.DataFrame, column="screen_name", title="Anzahl der Nutzer pro Partei"):
         fig, axs = plt.subplots()
 
@@ -76,3 +94,5 @@ class Plots:
         fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl der Nutzer")
+
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png")

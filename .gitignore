@@ -203,4 +203,4 @@ data/replication
 **/train*.txt
 **/test*.txt
 **/cache/
-data/images/
+**/images/
