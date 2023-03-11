@@ -40,6 +40,7 @@ pybind11 = "^2.10.3"
 fasttext = {git = "https://github.com/cfculhane/fastText"}
 gensim = "^4.3.0"
 plotly = "^5.13.1"
+kaleido = "0.2.1"
 
 [tool.poetry.group.dev.dependencies]
 black = { extras = ["jupyter"], version = "^22.8.0" }

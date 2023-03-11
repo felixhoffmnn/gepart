@@ -66,11 +66,11 @@ class Plots:
         sns.boxenplot(data=df, x="party", y=column, ax=axs[1])
 
         fig.suptitle(self._compose_title(title))
-        axs[0].set_xlabel("Wortanzahl (Nach Filterung)")
+        axs[0].set_xlabel("Anzahl an Wörtern")
         axs[0].set_ylabel("Anzahl")
         axs[0].set_xlim(0, x_lim)
         axs[1].set_xlabel("Parteien")
-        axs[1].set_ylabel("Wortanzahl")
+        axs[1].set_ylabel("Anzahl an Wörtern")
 
         fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png")
 
