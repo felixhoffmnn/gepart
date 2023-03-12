@@ -40,7 +40,7 @@ class Plots:
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
 
-        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png")
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
 
     def sentiment(self, df: pd.DataFrame, column="sentiment", title="Sentimentverteilung pro Partei"):
         fig, axs = plt.subplots()
@@ -57,7 +57,7 @@ class Plots:
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
 
-        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png")
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
 
     def word_count(self, df: pd.DataFrame, column="filter_word_count", title="Wortanzahl pro Partei", x_lim=100):
         fig, axs = plt.subplots(1, 2)
@@ -72,7 +72,7 @@ class Plots:
         axs[1].set_xlabel("Parteien")
         axs[1].set_ylabel("Anzahl an Wörtern")
 
-        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png")
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
 
     def gender(self, df: pd.DataFrame, column="gender", title="Geschlechterverteilung pro Partei"):
         fig, axs = plt.subplots()
@@ -84,7 +84,7 @@ class Plots:
         axs.set_ylabel("Anzahl")
         axs.legend(title="Geschlecht")
 
-        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png")
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
 
     def user_count(self, df: pd.DataFrame, column="screen_name", title="Anzahl der Nutzer pro Partei"):
         fig, axs = plt.subplots()
@@ -95,4 +95,4 @@ class Plots:
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl der Nutzer")
 
-        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png")
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
