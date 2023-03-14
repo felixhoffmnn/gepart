@@ -1,0 +1,4 @@
+outs:
+  - md5: dbcf818b3aeefcaefa115401d5f5217f
+    size: 1915704
+    path: prep_tweets_sent_sm.parquet

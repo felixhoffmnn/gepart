@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "studienarbeit"
-version = "0.1.1"
+version = "0.2.0"
 description = "The studienarbeit is a scientific paper which is written in the 5th and 6th semester at the DHBW."
 authors = [
   "Felix Hoffmann <felix.emmanuel.hoffmann@gmail.com>",
@@ -9,19 +9,38 @@ authors = [
 classifiers = [
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
 ]
 license = "MIT"
 readme = "README.md"
+packages = [{ include = "studienarbeit" }]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 loguru = "^0.6.0"
 pandas = "^1.5.0"
 numpy = "^1.23.3"
-polars = "^0.15.15"
 pyarrow = "^10.0.1"
 openpyxl = "^3.0.10"
+seaborn = "^0.12.2"
+nltk = "^3.8.1"
+spacy = [{extras = ["cuda12x", "lookups", "transformers"], version = "^3.5.0", platform = "linux"}, {extras = ["apple", "lookups", "transformers"], version = "^3.5.0", platform = "darwin"}]
+de-core-news-lg = {url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_lg-3.5.0/de_core_news_lg-3.5.0.tar.gz"}
+polars = "^0.16.2"
+python-dotenv = "^0.21.1"
+pandarallel = "^1.6.4"
+transformers = "^4.26.1"
+scikit-learn = "^1.2.1"
+dvc = {extras = ["gdrive"], version = "^2.45.1"}
+torch = "^1.13.1"
+num2words = "^0.5.12"
+lazypredict = "^0.2.12"
+pybind11 = "^2.10.3"
+fasttext = {git = "https://github.com/cfculhane/fastText"}
+gensim = "^4.3.0"
+plotly = "^5.13.1"
+kaleido = "0.2.1"
 
 [tool.poetry.group.dev.dependencies]
 black = { extras = ["jupyter"], version = "^22.8.0" }
@@ -32,14 +51,6 @@ flake8 = "^5.0.4"
 autopep8 = "^1.7.0"
 pre-commit = "^2.20.0"
 jupyter = "^1.0.0"
-
-[tool.poetry.group.docs.dependencies]
-mkdocs = { extras = ["python"], version = "^1.4.0" }
-mkdocs-material = "^8.5.6"
-mkdocstrings = { extras = ["python"], version = "^0.19.0" }
-mkdocs-autorefs = "^0.4.1"
-mkdocs-git-revision-date-localized-plugin = "^1.1.0"
-mkdocs-jupyter = "^0.22.0"
 
 [tool.mypy]
 mypy_path = 'studienarbeit'

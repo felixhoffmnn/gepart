@@ -1,0 +1,5 @@
+outs:
+- md5: d89a225c986475f73bbf749fed3fcd8b
+  size: 131261
+  isexec: true
+  path: faction.parquet

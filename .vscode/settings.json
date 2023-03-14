@@ -1,6 +1,7 @@
 {
   "gitmoji.outputType": "emoji",
   "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.codeActionsOnSave": {
@@ -13,5 +14,6 @@
   "python.formatting.provider": "black",
   "python.linting.mypyEnabled": true,
   "python.linting.pylintEnabled": true,
-  "python.linting.flake8Enabled": true
+  "python.linting.flake8Enabled": true,
+  "python.linting.pylintArgs": ["--generated-members=numpy.* ,torch.* ,fasttext.*"]
 }

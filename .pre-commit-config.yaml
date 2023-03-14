@@ -1,6 +1,6 @@
 ci:
   autofix_prs: false
-  skip: [poetry-lock, poetry-export]
+  # skip: [poetry-lock]
 
 default_language_version:
   python: python3.11
@@ -13,19 +13,9 @@ repos:
         name: Check poetry (poetry-check)
         always_run: true
 
-      - id: poetry-lock
-        name: Lock poetry (poetry-lock)
-        files: "pyproject.toml"
-
-      # - id: poetry-export
-      #   name: export poetry normal and dev (poetry-export)
-      #   args: ["--with=dev", "-f", "requirements.txt", "-o", "requirements.txt"]
-      #   files: "poetry.lock"
-
-      - id: poetry-export
-        name: Export poetry docs (poetry-export)
-        args: ["--only=docs", "-f", "requirements.txt", "-o", "docs/requirements.txt"]
-        files: "poetry.lock"
+      # - id: poetry-lock
+      #   name: Lock poetry (poetry-lock)
+      #   files: "pyproject.toml"
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
@@ -59,7 +49,7 @@ repos:
         types: [jupyter]
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.11.4
+    rev: 5.12.0
     hooks:
       - id: isort
         name: Sort imports (isort)
