@@ -24,7 +24,7 @@ pyarrow = "^10.0.1"
 openpyxl = "^3.0.10"
 seaborn = "^0.12.2"
 nltk = "^3.8.1"
-spacy = "^3.5.0"
+spacy = [{extras = ["cuda12x", "lookups", "transformers"], version = "^3.5.0", platform = "linux"}, {extras = ["apple", "lookups", "transformers"], version = "^3.5.0", platform = "darwin"}]
 de-core-news-md = { url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_md-3.5.0/de_core_news_md-3.5.0.tar.gz" }
 polars = "^0.16.2"
 python-dotenv = "^0.21.1"
@@ -43,6 +43,7 @@ spacy-sentiws = "^3.0.0"
 jupyter-contrib-nbextensions = "^0.7.0"
 datasets = "^2.10.0"
 protobuf = "3.20.0"
+wordcloud = "^1.8.2.2"
 
 [tool.poetry.group.dev.dependencies]
 black = { extras = ["jupyter"], version = "^22.8.0" }

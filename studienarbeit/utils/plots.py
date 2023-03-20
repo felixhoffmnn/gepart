@@ -1,6 +1,10 @@
+import ast
+from collections import Counter
+
 import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
+from wordcloud import WordCloud
 
 
 class Plots:
@@ -15,6 +19,8 @@ class Plots:
         self.party_palette = party_palette
         sns.set(style="white", palette=self.color_palette, rc={"figure.figsize": (20, 8)})
         self.line_kws = {"color": "r", "alpha": 0.7, "lw": 5}
+        with open("../../data/stopwords/german_stopwords_full.txt", "r") as f:
+            self.stopwords = f.read().splitlines()
 
     def party_count(self, df: pd.DataFrame, column="party", title="Parteien"):
         fig, axs = plt.subplots()
@@ -51,7 +57,7 @@ class Plots:
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
 
-    def sentiment(self, df: pd.DataFrame, column="sentiment", title="Sentiment"):
+    def sentiment(self, df: pd.DataFrame, column="sentiment", title="Sentiment der Reden nach Partei"):
         fig, axs = plt.subplots()
 
         sns.barplot(
@@ -63,24 +69,27 @@ class Plots:
         )
 
         fig.suptitle(title)
-        axs.set_xlabel("Parteien")
-        axs.set_ylabel("Anzahl")
+        axs.set_xlabel("Partei")
+        axs.set_ylabel("Anzahl an Reden")
 
     def text_count(
         self, df: pd.DataFrame, column="stemm_word_count", title="Wortanzahl", measure_name="Wortanzahl", x_lim=100
     ):
         fig, axs = plt.subplots(1, 2)
 
-        sns.kdeplot(data=df, x=column, hue="party", palette=self.party_palette, ax=axs[0])
+        sns.kdeplot(data=df, x=column, hue="party", palette=self.party_palette, ax=axs[0], legend=False)
+        axs[0].legend(title="Partei", loc="upper right", labels=df["party"].unique())
 
         descending_median_order = df.groupby("party")[column].median().sort_values(ascending=False).index
-        sns.boxplot(data=df, x="party", y=column, palette=self.party_palette, ax=axs[1], order=descending_median_order)
+        sns.boxenplot(
+            data=df, x="party", y=column, palette=self.party_palette, ax=axs[1], order=descending_median_order
+        )
 
         fig.suptitle(title)
         axs[0].set_xlabel(measure_name)
-        axs[0].set_ylabel("Anteil")
+        axs[0].set_ylabel("Dichte")
         axs[0].set_xlim(0, x_lim)
-        axs[1].set_xlabel("Parteien")
+        axs[1].set_xlabel("Partei")
         axs[1].set_ylabel(measure_name)
 
     def gender(self, df: pd.DataFrame, column="gender", title="Geschlechterverteilung pro Partei"):
@@ -101,3 +110,39 @@ class Plots:
         fig.suptitle(title)
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl der Nutzer")
+
+    def wordclouds(self, df: pd.DataFrame, column="tokenized_text", title="Wordclouds nach Partei"):
+        df["tokenized_text_merged"] = df[column].apply(lambda x: " ".join(ast.literal_eval(x)))
+
+        numbers = ["null", "eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun"]
+        verbs = ["müssen", "sagen", "sollen", "geben", "gehen", "dürfen", "müssen"]
+        speeches = ["kollege", "kollegin", "dame", "herr", "jahr", "antrag", "rede"]
+        all_stopwords = self.stopwords + numbers + verbs + speeches
+
+        df["tokenized_text_merged"] = df["tokenized_text_merged"].apply(
+            lambda x: " ".join([word for word in x.split() if word not in all_stopwords])
+        )
+
+        parties = sorted(df["party"].unique())
+        wordclouds = [self._get_get_wordcloud(df, party, 20) for party in parties]
+
+        fig, axs = plt.subplots(2, 3)
+
+        for i, ax in enumerate(axs.flatten()):
+            ax.imshow(wordclouds[i], interpolation="bilinear")
+            ax.axis("off")
+            ax.set_title(parties[i])
+
+        fig.suptitle("Wordclouds nach Partei")
+
+    def _get_get_wordcloud(self, df: pd.DataFrame, party: str, max_words: int = 20) -> WordCloud:
+        df_party = df[df["party"] == party]
+        wc = WordCloud()
+        counts_all = Counter()
+
+        df_party["tokenized_text_merged"].progress_apply(lambda x: counts_all.update(wc.process_text(x)))
+        wc.generate_from_frequencies(counts_all)
+        wc.background_color = "white"
+        wc.max_words = max_words
+
+        return wc
