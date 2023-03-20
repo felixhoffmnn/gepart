@@ -1,4 +1,3 @@
-import ast
 from collections import Counter
 from pathlib import Path
 
@@ -13,7 +12,6 @@ from studienarbeit.utils.load import EDataTypes
 
 class Plots:
     """
-    TODO: Plot length of texts in symbole count
     TODO: Plot count per day per party
     """
 
@@ -34,25 +32,34 @@ class Plots:
             self.stopwords = f.read().splitlines()
 
     def _compose_title(self, title: str):
-        return f"{title} ({self.data_type})"
+        data_type_names = {
+            EDataTypes.TWEETS.value: "Tweets",
+            EDataTypes.SPEECHES.value: "Reden",
+            EDataTypes.PARTY_PROGRAMS.value: "Wahlprogramme",
+        }
+        return f"{title} ({data_type_names[self.data_type]})"
 
     def party_count(self, df: pd.DataFrame, column="party", title="Anzahl an Einträgen pro Partei"):
         fig, axs = plt.subplots()
 
         sns.countplot(x=column, data=df, ax=axs, palette=self.party_palette, order=df[column].value_counts().index)
 
-        fig.suptitle(title)
+        fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
+
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True, bbox_inches="tight")
 
     def grouped_party_count(self, df: pd.DataFrame, group_column, title, main_column="party"):
         fig, axs = plt.subplots()
 
         sns.countplot(x=main_column, data=df, hue=group_column, ax=axs)
 
-        fig.suptitle(title)
+        fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
+
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True, bbox_inches="tight")
 
     def politician_count(
         self, df: pd.DataFrame, politician_column="politicianId", party_column="party", title="Politiker pro Partei"
@@ -71,7 +78,7 @@ class Plots:
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
 
-        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True, bbox_inches="tight")
 
     def sentiment(self, df: pd.DataFrame, column="sentiment", title="Sentimentverteilung pro Partei"):
         fig, axs = plt.subplots()
@@ -88,7 +95,7 @@ class Plots:
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
 
-        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True, bbox_inches="tight")
 
     def word_count(
         self,
@@ -115,7 +122,7 @@ class Plots:
         axs[1].set_xlabel("Parteien")
         axs[1].set_ylabel(count_name)
 
-        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True, bbox_inches="tight")
 
     def gender(self, df: pd.DataFrame, column="gender", title="Geschlechterverteilung pro Partei"):
         fig, axs = plt.subplots()
@@ -127,7 +134,7 @@ class Plots:
         axs.set_ylabel("Anzahl")
         axs.legend(title="Geschlecht")
 
-        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True, bbox_inches="tight")
 
     def user_count(self, df: pd.DataFrame, column="screen_name", title="Anzahl der Nutzer pro Partei"):
         fig, axs = plt.subplots()
@@ -138,7 +145,7 @@ class Plots:
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl der Nutzer")
 
-        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True, bbox_inches="tight")
 
     def wordclouds(self, df: pd.DataFrame, column="tokenized_text", title="Wordclouds nach Partei"):
         numbers = ["null", "eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun"]
@@ -160,9 +167,9 @@ class Plots:
             ax.axis("off")
             ax.set_title(parties[i])
 
-        fig.suptitle("Wordclouds nach Partei")
+        fig.suptitle(self._compose_title(title))
 
-        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True, bbox_inches="tight")
 
     def _get_get_wordcloud(self, df: pd.DataFrame, party: str, max_words: int = 20) -> WordCloud:
         df_party = df[df["party"] == party]

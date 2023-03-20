@@ -25,8 +25,6 @@ class Cleaning:
             "de_core_news_lg", exclude=["tagger", "morphologizer", "parser", "senter", "ner"]
         )
 
-
-
     def clean_text(self, text: str, keep_punctuation: bool = False, keep_upper: bool = False) -> str:
         """Receives a text and removes all special characters, icons and usernames and returns the cleaned text
 
@@ -59,14 +57,17 @@ class Cleaning:
         text = re.sub(
             r"\s\d+\s", lambda x: " " + num2words(int(x.group(0)), lang="de") + " ", text
         )  # replace numbers with words
-        
-        text = re.sub(r"[^a-zA-ZäöüÄÖÜß,.:;\?\s]", " ", text)  # remove special characters
+
+        text = self.clean_gender(text)
+
+        text = re.sub(r"[^a-zA-ZäöüÄÖÜß,.:;\?!\s]", " ", text)  # remove special characters
         text = re.sub(r"\s[a-zA-ZäöüÄÖÜß]\s", " ", text)  # remove single characters
-        
+
         if not keep_punctuation:
-            text = re.sub(r"[,.:;?]+", " ", text)  # remove punctuation
+            text = re.sub(r"[,.:;\?!]+", " ", text)  # remove punctuation
 
         text = " ".join(text.split())  # remove multiple spaces
+
         if not keep_upper:
             text = text.lower()
 
@@ -110,7 +111,7 @@ class Cleaning:
         logger.debug("Stopwords removed.")
         return filtered_text
 
-    def clean_gender(self, text: str, gender_symbols=["*", ":"]) -> str:
+    def clean_gender(self, text: str, gender_symbols: list[str] = ["*", ":"]) -> str:
         """Removes 'gegenderte' words from a text
 
         Parameters
@@ -123,7 +124,7 @@ class Cleaning:
         Returns
         -------
         str
-            The cleaned text
+            The cleaned text without gender forms
         """
         for symbol in gender_symbols:
             text = re.sub(f"([a-zßäöü])\{symbol}innen([a-zßäöü]?)", r"\1\2", text)
@@ -146,7 +147,6 @@ class Cleaning:
             text = text.replace(f"{symbol}n", "n")
             text = text.replace(f"{symbol}e", "n")
 
-        logger.debug("Gender removed.")
         return text
 
     def pipeline(self, text: str) -> tuple[str, str, str]:
