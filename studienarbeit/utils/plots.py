@@ -22,8 +22,6 @@ class Plots:
         self.party_palette = party_palette
         sns.set(style="white", palette=self.color_palette, rc={"figure.figsize": (20, 8)})
         self.line_kws = {"color": "r", "alpha": 0.7, "lw": 5}
-        with open("../../data/stopwords/german_stopwords_full.txt", "r") as f:
-            self.stopwords = f.read().splitlines()
 
         self.data_type = data_type.value
         self.data_dir = Path(data_dir) / "images" / data_type.value
@@ -31,6 +29,9 @@ class Plots:
         if not self.data_dir.exists():
             logger.info(f"Creating directory {self.data_dir}")
             self.data_dir.mkdir(parents=True)
+
+        with open("../../data/stopwords/german_stopwords_full.txt", "r", encoding="utf-8") as f:
+            self.stopwords = f.read().splitlines()
 
     def _compose_title(self, title: str):
         return f"{title} ({self.data_type})"
@@ -89,7 +90,14 @@ class Plots:
 
         fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
 
-    def word_count(self, df: pd.DataFrame, column="filter_word_count", title="Wortanzahl pro Partei", x_lim=100):
+    def word_count(
+        self,
+        df: pd.DataFrame,
+        column="filter_word_count",
+        title="Wortanzahl pro Partei",
+        x_lim=100,
+        count_name="Anzahl an Wörtern",
+    ):
         fig, axs = plt.subplots(1, 2)
 
         sns.kdeplot(data=df, x=column, hue="party", palette=self.party_palette, ax=axs[0], legend=False)
@@ -101,11 +109,11 @@ class Plots:
         )
 
         fig.suptitle(self._compose_title(title))
-        axs[0].set_xlabel("Anzahl an Wörtern")
+        axs[0].set_xlabel(count_name)
         axs[0].set_ylabel("Dichte")
         axs[0].set_xlim(0, x_lim)
         axs[1].set_xlabel("Parteien")
-        axs[1].set_ylabel("Anzahl an Wörtern")
+        axs[1].set_ylabel(count_name)
 
         fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
 
@@ -129,18 +137,16 @@ class Plots:
         fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl der Nutzer")
-        
+
         fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
 
     def wordclouds(self, df: pd.DataFrame, column="tokenized_text", title="Wordclouds nach Partei"):
-        df["tokenized_text_merged"] = df[column].apply(lambda x: " ".join(ast.literal_eval(x)))
-
         numbers = ["null", "eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun"]
         verbs = ["müssen", "sagen", "sollen", "geben", "gehen", "dürfen", "müssen"]
         speeches = ["kollege", "kollegin", "dame", "herr", "jahr", "antrag", "rede"]
         all_stopwords = self.stopwords + numbers + verbs + speeches
 
-        df["tokenized_text_merged"] = df["tokenized_text_merged"].apply(
+        df["tokenized_text_without_stopwords"] = df["tokenized_text"].apply(
             lambda x: " ".join([word for word in x.split() if word not in all_stopwords])
         )
 
@@ -155,7 +161,7 @@ class Plots:
             ax.set_title(parties[i])
 
         fig.suptitle("Wordclouds nach Partei")
-        
+
         fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
 
     def _get_get_wordcloud(self, df: pd.DataFrame, party: str, max_words: int = 20) -> WordCloud:
@@ -163,7 +169,7 @@ class Plots:
         wc = WordCloud()
         counts_all = Counter()
 
-        df_party["tokenized_text_merged"].progress_apply(lambda x: counts_all.update(wc.process_text(x)))
+        df_party["tokenized_text_without_stopwords"].progress_apply(lambda x: counts_all.update(wc.process_text(x)))
         wc.generate_from_frequencies(counts_all)
         wc.background_color = "white"
         wc.max_words = max_words
