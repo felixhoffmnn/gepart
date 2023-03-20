@@ -10,7 +10,6 @@ from wordcloud import WordCloud
 class Plots:
     """
     TODO: Plot length of texts in symbole count
-    TODO: Wordcloud with most used words per party
     TODO: Plot count per day per party
     """
 
