@@ -192,7 +192,7 @@ cython_debug/
 
 ### Custom ###
 data/replication
-.python-version
+.tool-versions
 *.feather
 *.pkl
 *.parquet
@@ -202,5 +202,7 @@ data/party_programs/**/*.pdf
 .DS_Store
 *.bin
 *.vec
-test.txt
-train.txt
+**/train*.txt
+**/test*.txt
+**/cache/
+**/images/

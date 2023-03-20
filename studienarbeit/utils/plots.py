@@ -1,10 +1,14 @@
 import ast
 from collections import Counter
+from pathlib import Path
 
 import pandas as pd
 import seaborn as sns
+from loguru import logger
 from matplotlib import pyplot as plt
 from wordcloud import WordCloud
+
+from studienarbeit.utils.load import EDataTypes
 
 
 class Plots:
@@ -13,7 +17,7 @@ class Plots:
     TODO: Plot count per day per party
     """
 
-    def __init__(self, party_palette=None):
+    def __init__(self, data_type: EDataTypes, data_dir: str | Path = "../../data", party_palette=None):
         self.color_palette = "muted"
         self.party_palette = party_palette
         sns.set(style="white", palette=self.color_palette, rc={"figure.figsize": (20, 8)})
@@ -21,7 +25,17 @@ class Plots:
         with open("../../data/stopwords/german_stopwords_full.txt", "r") as f:
             self.stopwords = f.read().splitlines()
 
-    def party_count(self, df: pd.DataFrame, column="party", title="Parteien"):
+        self.data_type = data_type.value
+        self.data_dir = Path(data_dir) / "images" / data_type.value
+
+        if not self.data_dir.exists():
+            logger.info(f"Creating directory {self.data_dir}")
+            self.data_dir.mkdir(parents=True)
+
+    def _compose_title(self, title: str):
+        return f"{title} ({self.data_type})"
+
+    def party_count(self, df: pd.DataFrame, column="party", title="Anzahl an Einträgen pro Partei"):
         fig, axs = plt.subplots()
 
         sns.countplot(x=column, data=df, ax=axs, palette=self.party_palette, order=df[column].value_counts().index)
@@ -52,11 +66,13 @@ class Plots:
 
         sns.barplot(x=party_column, y="count", data=df_speakers_grouped, palette=self.party_palette)
 
-        fig.suptitle(title)
+        fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
 
-    def sentiment(self, df: pd.DataFrame, column="sentiment", title="Sentiment der Reden nach Partei"):
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
+
+    def sentiment(self, df: pd.DataFrame, column="sentiment", title="Sentimentverteilung pro Partei"):
         fig, axs = plt.subplots()
 
         sns.barplot(
@@ -67,13 +83,13 @@ class Plots:
             ax=axs,
         )
 
-        fig.suptitle(title)
-        axs.set_xlabel("Partei")
-        axs.set_ylabel("Anzahl an Reden")
+        fig.suptitle(self._compose_title(title))
+        axs.set_xlabel("Parteien")
+        axs.set_ylabel("Anzahl")
 
-    def text_count(
-        self, df: pd.DataFrame, column="stemm_word_count", title="Wortanzahl", measure_name="Wortanzahl", x_lim=100
-    ):
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
+
+    def word_count(self, df: pd.DataFrame, column="filter_word_count", title="Wortanzahl pro Partei", x_lim=100):
         fig, axs = plt.subplots(1, 2)
 
         sns.kdeplot(data=df, x=column, hue="party", palette=self.party_palette, ax=axs[0], legend=False)
@@ -84,31 +100,37 @@ class Plots:
             data=df, x="party", y=column, palette=self.party_palette, ax=axs[1], order=descending_median_order
         )
 
-        fig.suptitle(title)
-        axs[0].set_xlabel(measure_name)
+        fig.suptitle(self._compose_title(title))
+        axs[0].set_xlabel("Anzahl an Wörtern")
         axs[0].set_ylabel("Dichte")
         axs[0].set_xlim(0, x_lim)
-        axs[1].set_xlabel("Partei")
-        axs[1].set_ylabel(measure_name)
+        axs[1].set_xlabel("Parteien")
+        axs[1].set_ylabel("Anzahl an Wörtern")
+
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
 
     def gender(self, df: pd.DataFrame, column="gender", title="Geschlechterverteilung pro Partei"):
         fig, axs = plt.subplots()
 
         sns.countplot(data=df, x="party", hue=column, ax=axs)
 
-        fig.suptitle(title)
+        fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl")
         axs.legend(title="Geschlecht")
 
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
+
     def user_count(self, df: pd.DataFrame, column="screen_name", title="Anzahl der Nutzer pro Partei"):
         fig, axs = plt.subplots()
 
-        sns.barplot(df.groupby("party")[column].nunique().reset_index(name="count"), x="party", y="count", ax=axs)
+        sns.barplot(data=df.groupby("party")[column].nunique().reset_index(name="count"), x="party", y="count", ax=axs)
 
-        fig.suptitle(title)
+        fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")
         axs.set_ylabel("Anzahl der Nutzer")
+        
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
 
     def wordclouds(self, df: pd.DataFrame, column="tokenized_text", title="Wordclouds nach Partei"):
         df["tokenized_text_merged"] = df[column].apply(lambda x: " ".join(ast.literal_eval(x)))
@@ -133,6 +155,8 @@ class Plots:
             ax.set_title(parties[i])
 
         fig.suptitle("Wordclouds nach Partei")
+        
+        fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True)
 
     def _get_get_wordcloud(self, df: pd.DataFrame, party: str, max_words: int = 20) -> WordCloud:
         df_party = df[df["party"] == party]
