@@ -25,6 +25,8 @@ class Cleaning:
             "de_core_news_lg", exclude=["tagger", "morphologizer", "parser", "senter", "ner"]
         )
 
+        logger.info("Using GPU for cleaning." if prefer_gpu() else "Using CPU for cleaning.")
+
     def clean_text(self, text: str, keep_punctuation: bool = False, keep_upper: bool = False) -> str:
         """Receives a text and removes all special characters, icons and usernames and returns the cleaned text
 

@@ -158,7 +158,7 @@ class Plots:
         )
 
         parties = sorted(df["party"].unique())
-        wordclouds = [self._get_get_wordcloud(df, party, 20) for party in parties]
+        wordclouds = [self._get_wordcloud(df, party, 20) for party in parties]
 
         fig, axs = plt.subplots(2, 3)
 
@@ -171,7 +171,7 @@ class Plots:
 
         fig.savefig(self.data_dir / f"{title.lower().replace(' ', '_')}.png", transparent=True, bbox_inches="tight")
 
-    def _get_get_wordcloud(self, df: pd.DataFrame, party: str, max_words: int = 20) -> WordCloud:
+    def _get_wordcloud(self, df: pd.DataFrame, party: str, max_words: int = 20) -> WordCloud:
         df_party = df[df["party"] == party]
         wc = WordCloud()
         counts_all = Counter()

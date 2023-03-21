@@ -27,7 +27,6 @@ seaborn = "^0.12.2"
 nltk = "^3.8.1"
 spacy = [{extras = ["cuda12x", "lookups", "transformers"], version = "^3.5.0", platform = "linux"}, {extras = ["apple", "lookups", "transformers"], version = "^3.5.0", platform = "darwin"}]
 pdfminer-six = "^20220524"
-textblob-de = "^0.4.3"
 wordcloud = "^1.8.2.2"
 de-core-news-lg = {url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_lg-3.5.0/de_core_news_lg-3.5.0.tar.gz"}
 polars = "^0.16.2"
@@ -54,7 +53,6 @@ flake8 = "^5.0.4"
 autopep8 = "^1.7.0"
 pre-commit = "^2.20.0"
 jupyter = "^1.0.0"
-ipykernel = "^6.21.2"
 
 [tool.mypy]
 mypy_path = 'studienarbeit'
