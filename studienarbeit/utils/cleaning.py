@@ -27,17 +27,17 @@ class Cleaning:
 
         logger.info("Using GPU for cleaning." if prefer_gpu() else "Using CPU for cleaning.")
 
-        logger.debug("Initialized CleanText class.")
-
-    def clean_text(self, text: str) -> str:
+    def clean_text(self, text: str, keep_punctuation: bool = False, keep_upper: bool = False) -> str:
         """Receives a text and removes all special characters, icons and usernames and returns the cleaned text
 
         Parameters
         ----------
         text : str
             The text which should be cleaned
-        isTweet : bool
-            A boolean which indicates if the text is a tweet or not
+        keep_punctuation : bool
+            A boolean which indicates if punctuation should be kept or not
+        keep_upper : bool
+            A boolean which indicates if upper case letters should be kept or be lowered
 
         Returns
         -------
@@ -59,10 +59,19 @@ class Cleaning:
         text = re.sub(
             r"\s\d+\s", lambda x: " " + num2words(int(x.group(0)), lang="de") + " ", text
         )  # replace numbers with words
-        text = re.sub(r"[,.:;?]+", " ", text)  # remove punctuation
-        text = re.sub(r"[^a-zA-ZäöüÄÖÜß\s]", " ", text)  # remove special characters
+
+        text = self.clean_gender(text)
+
+        text = re.sub(r"[^a-zA-ZäöüÄÖÜß,.:;\?!\s]", " ", text)  # remove special characters
         text = re.sub(r"\s[a-zA-ZäöüÄÖÜß]\s", " ", text)  # remove single characters
-        text = " ".join(text.split()).lower()  # remove multiple spaces
+
+        if not keep_punctuation:
+            text = re.sub(r"[,.:;\?!]+", " ", text)  # remove punctuation
+
+        text = " ".join(text.split())  # remove multiple spaces
+
+        if not keep_upper:
+            text = text.lower()
 
         logger.debug("Text cleaned.")
         return text
@@ -103,6 +112,44 @@ class Cleaning:
 
         logger.debug("Stopwords removed.")
         return filtered_text
+
+    def clean_gender(self, text: str, gender_symbols: list[str] = ["*", ":"]) -> str:
+        """Removes 'gegenderte' words from a text
+
+        Parameters
+        ----------
+        text : str
+            The text which should be cleaned
+        gender_symbols : list, optional
+            The symbols used in the text as gender symbols, by default ["*", ":"]
+
+        Returns
+        -------
+        str
+            The cleaned text without gender forms
+        """
+        for symbol in gender_symbols:
+            text = re.sub(f"([a-zßäöü])\{symbol}innen([a-zßäöü]?)", r"\1\2", text)
+            text = re.sub(f"([a-zßäöü])\{symbol}in([a-zßäöü]?)", r"\1\2", text)
+            text = text.replace(f"Sinti{symbol}zze und Rom{symbol}nja", "Sinti und Roma")
+            text = text.replace(f"der{symbol}die", "der")
+            text = text.replace(f"die{symbol}der", "der")
+            text = text.replace(f"den{symbol}die", "den")
+            text = text.replace(f"dem{symbol}der", "dem")
+            text = text.replace(f"der{symbol}s", "des")
+            text = text.replace(f"eines{symbol}einer", "eines")
+            text = text.replace(f"einer{symbol}s", "eines")
+            text = text.replace(f"ihre{symbol}seine", "seine")
+            text = text.replace(f"seiner{symbol}ihrer", "seiner")
+            text = text.replace(f"jeder{symbol}m", "jedem")
+            text = text.replace(f"Sie{symbol}Er", "Er")
+            text = text.replace(f"des{symbol}der", "des")
+            text = text.replace(f"welchem{symbol}welcher", "welchem")
+            text = text.replace(f"{symbol}r", "r")
+            text = text.replace(f"{symbol}n", "n")
+            text = text.replace(f"{symbol}e", "n")
+
+        return text
 
     def pipeline(self, text: str) -> tuple[str, str, str]:
         """A pipeline in order to combine all methods in order to clean a text

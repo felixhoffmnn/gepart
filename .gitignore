@@ -196,8 +196,10 @@ data/replication
 *.feather
 *.pkl
 *.parquet
+data/party_programs/**/*.pdf
 **/out/*
 !**/out/*.pdf
+.DS_Store
 *.bin
 *.vec
 **/train*.txt
