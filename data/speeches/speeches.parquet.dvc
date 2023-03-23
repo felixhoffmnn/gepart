@@ -1,4 +1,4 @@
 outs:
-- md5: 444928503e1805d37f78e2a5cfeddcb5
-  size: 72839931
+- md5: f006d9cddf1ab6d693a82f226badfaa1
+  size: 68761730
   path: speeches.parquet
