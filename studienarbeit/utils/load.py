@@ -33,7 +33,7 @@ class Load:
 
         Parameters
         ----------
-        file_path : str
+        file_path : str | Path
             The path to the file. The path is relative to the `data_dir` that was passed to the constructor.
         file_type : str, optional
             The file type. By default `parquet`.

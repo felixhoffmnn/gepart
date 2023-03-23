@@ -15,7 +15,7 @@ class Plots:
     TODO: Plot count per day per party
     """
 
-    def __init__(self, data_type: EDataTypes, data_dir: str | Path = "../../data", party_palette=None):
+    def __init__(self, data_type: EDataTypes, data_dir: str | Path = "../../data", party_palette:  dict[str, str] | None = None):
         self.color_palette = "muted"
         self.party_palette = party_palette
         sns.set(style="white", palette=self.color_palette, rc={"figure.figsize": (20, 8)})
@@ -139,7 +139,7 @@ class Plots:
     def user_count(self, df: pd.DataFrame, column="screen_name", title="Anzahl der Nutzer pro Partei"):
         fig, axs = plt.subplots()
 
-        sns.barplot(data=df.groupby("party")[column].nunique().reset_index(name="count"), x="party", y="count", ax=axs)
+        sns.barplot(data=df.groupby("party")[column].nunique().reset_index(name="count"), x="party", y="count", palette=self.party_palette, ax=axs)
 
         fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")

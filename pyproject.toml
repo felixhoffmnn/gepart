@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "studienarbeit"
-version = "0.2.0"
+version = "0.2.1"
 description = "The studienarbeit is a scientific paper which is written in the 5th and 6th semester at the DHBW."
 authors = [
   "Felix Hoffmann <felix.emmanuel.hoffmann@gmail.com>",
@@ -27,7 +27,6 @@ seaborn = "^0.12.2"
 nltk = "^3.8.1"
 spacy = [{extras = ["cuda12x", "lookups", "transformers"], version = "^3.5.0", platform = "linux"}, {extras = ["apple", "lookups", "transformers"], version = "^3.5.0", platform = "darwin"}]
 pdfminer-six = "^20220524"
-wordcloud = "^1.8.2.2"
 de-core-news-lg = {url = "https://github.com/explosion/spacy-models/releases/download/de_core_news_lg-3.5.0/de_core_news_lg-3.5.0.tar.gz"}
 polars = "^0.16.2"
 python-dotenv = "^0.21.1"
@@ -43,6 +42,7 @@ fasttext = {git = "https://github.com/cfculhane/fastText"}
 gensim = "^4.3.0"
 plotly = "^5.13.1"
 kaleido = "0.2.1"
+wordcloud = "^1.8.2.2"
 
 [tool.poetry.group.dev.dependencies]
 black = { extras = ["jupyter"], version = "^22.8.0" }
