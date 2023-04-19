@@ -1,6 +1,6 @@
 ci:
   autofix_prs: false
-  # skip: [poetry-lock]
+  skip: [dvc-pre-commit, dvc-pre-push, dvc-pre-checkout]
 
 default_language_version:
   python: python3.11
