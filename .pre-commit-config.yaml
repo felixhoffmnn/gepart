@@ -78,9 +78,9 @@ repos:
         name: Sort imports (isort)
 
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.3.0
     hooks:
-      - id: black
+      - id: black-jupyter
         name: Format python code (black)
 
   - repo: https://github.com/PyCQA/flake8
