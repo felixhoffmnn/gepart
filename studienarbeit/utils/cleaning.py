@@ -57,7 +57,7 @@ class Cleaning:
 
         text = re.sub(r"(\d+).(\d+)", r"\1\2", text)  # remove dots and commas from numbers
         text = re.sub(
-            r"\s\d+\s", lambda x: " " + num2words(int(x.group(0)), lang="de") + " ", text
+            r"\s\d+\s", lambda x: str(" " + num2words(int(x.group(0)), lang="de") + " "), text
         )  # replace numbers with words
 
         text = self.clean_gender(text)
@@ -129,8 +129,8 @@ class Cleaning:
             The cleaned text without gender forms
         """
         for symbol in gender_symbols:
-            text = re.sub(f"([a-zßäöü])\{symbol}innen([a-zßäöü]?)", r"\1\2", text)
-            text = re.sub(f"([a-zßäöü])\{symbol}in([a-zßäöü]?)", r"\1\2", text)
+            text = re.sub(rf"([a-zßäöü])\{symbol}innen([a-zßäöü]?)", r"\1\2", text)
+            text = re.sub(rf"([a-zßäöü])\{symbol}in([a-zßäöü]?)", r"\1\2", text)
             text = text.replace(f"Sinti{symbol}zze und Rom{symbol}nja", "Sinti und Roma")
             text = text.replace(f"der{symbol}die", "der")
             text = text.replace(f"die{symbol}der", "der")

@@ -33,7 +33,7 @@ class Plots:
             logger.info(f"Creating directory {self.data_dir}")
             self.data_dir.mkdir(parents=True)
 
-        with open("../../data/stopwords/german_stopwords_full.txt", "r", encoding="utf-8") as f:
+        with open("../../data/stopwords/german_stopwords_full.txt", encoding="utf-8") as f:
             self.stopwords = f.read().splitlines()
 
     def _compose_title(self, title: str):
@@ -185,7 +185,7 @@ class Plots:
     def _get_wordcloud(self, df: pd.DataFrame, party: str, max_words: int = 20) -> WordCloud:
         df_party = df[df["party"] == party]
         wc = WordCloud()
-        counts_all = Counter()
+        counts_all = Counter()  # type: ignore
 
         df_party["tokenized_text_without_stopwords"].progress_apply(lambda x: counts_all.update(wc.process_text(x)))
         wc.generate_from_frequencies(counts_all)
