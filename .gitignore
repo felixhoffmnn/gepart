@@ -206,3 +206,7 @@ data/party_programs/**/*.pdf
 **/test*.txt
 **/cache/
 **/images/
+*.h5
+/data/embeddings/*.pkl
+/data/embeddings/*.txt
+/data/embeddings/*.model

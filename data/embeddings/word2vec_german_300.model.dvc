@@ -1,0 +1,4 @@
+outs:
+- md5: 32ad08432e38756f09c9f4ce64687fe5
+  size: 738037646
+  path: word2vec_german_300.model
