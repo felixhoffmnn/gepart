@@ -1,4 +1,6 @@
 import numpy as np
+from imblearn.over_sampling import RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
 from keras.preprocessing.text import Tokenizer
 from keras.utils import to_categorical
 from keras_preprocessing.sequence import pad_sequences
@@ -32,3 +34,16 @@ def get_vectorized_input_data(X_train, X_val, X_test, max_vocab_size=50000, max_
     X_test_vec_pad = pad_sequences(X_test_vec, maxlen=max_len, truncating="post", padding="post")
 
     return X_train_vec_pad, X_val_vec_pad, X_test_vec_pad, tokenizer.word_index
+
+
+def get_sampled_data(X_train, y_train, sampling="under"):
+    if sampling == "under":
+        sampler = RandomUnderSampler()
+    elif sampling == "over":
+        sampler = RandomOverSampler()
+    else:
+        raise ValueError("Invalid sampling.")
+
+    X_train_res, y_train_res = sampler.fit_resample(X_train, y_train)
+
+    return X_train_res, y_train_res

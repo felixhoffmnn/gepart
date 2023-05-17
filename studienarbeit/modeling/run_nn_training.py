@@ -21,13 +21,18 @@ from studienarbeit.modeling.embeddings.fasttext import FastText
 from studienarbeit.modeling.embeddings.glove import GloVe
 from studienarbeit.modeling.embeddings.spacy_vectors import SpaCy
 from studienarbeit.modeling.embeddings.word2vec import Word2Vec
-from studienarbeit.modeling.utils.data import get_split_data, get_vectorized_input_data
+from studienarbeit.modeling.utils.data import (
+    get_sampled_data,
+    get_split_data,
+    get_vectorized_input_data,
+)
 
 parser = ArgumentParser(description="Train a LSTM model.")
 parser.add_argument(
     "--dataset", type=str, default="all", help="Dataset to use: 'all', 'speeches', 'party_programs' or 'tweets'."
 )
 parser.add_argument("--num_samples", type=int, default=0, help="Number of samples to use. Default: 0 (all samples)")
+parser.add_argument("--sampling", type=str, default="none", help="'none', 'over' or 'under'.")
 parser.add_argument("--num_classes", type=int, default=6, help="Number of classes to predict.")
 parser.add_argument("--approach", type=str, default="LSTM", help="'DNN', 'CNN' or 'LSTM'.")
 parser.add_argument("--variation", type=int, default=1, help="Variation of the approach.")
@@ -51,6 +56,7 @@ parser.add_argument("--batch_size", type=int, default=64, help="Batch size.")
 args = parser.parse_args()
 DATASET = args.dataset
 NUM_SAMPLES = args.num_samples
+SAMPLING = args.sampling
 NUM_CLASSES = args.num_classes
 
 APPROACH = args.approach
@@ -114,6 +120,10 @@ else:
     )
 
 logger.info("Vectorized input data.")
+
+if SAMPLING != "none":
+    X_train_vec, y_train = get_sampled_data(X_train_vec, y_train, SAMPLING)
+    logger.info(f"Sampled data with {SAMPLING}sampling.")
 
 
 if APPROACH == "CNN" or APPROACH == "LSTM":
@@ -182,7 +192,6 @@ hist = model.fit(
 
 loss = pd.DataFrame({"train loss": hist.history["loss"], "test loss": hist.history["val_loss"]}).melt()
 loss["epoch"] = loss.groupby("variable").cumcount() + 1
-plt.figure()
 sns.lineplot(x="epoch", y="value", hue="variable", data=loss).set(title="Model loss", ylabel="")
 plt.show()
 
@@ -200,6 +209,5 @@ with open("../../data/party_encoding.json", encoding="utf-8") as f:
 
 conf_mat = confusion_matrix(y_test_num, y_pred, normalize="true")
 disp = ConfusionMatrixDisplay(confusion_matrix=conf_mat, display_labels=party_encoding.keys())
-plt.figure()
 disp.plot(cmap=plt.cm.Blues)
 plt.show()
