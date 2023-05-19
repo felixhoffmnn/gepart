@@ -1,0 +1,4 @@
+outs:
+- md5: b61306bed5689861df38eb454c05b448
+  size: 70549008
+  path: speeches_sentence.parquet

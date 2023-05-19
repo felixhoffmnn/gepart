@@ -2,6 +2,7 @@ import logging
 
 import pandas as pd
 from nltk import sent_tokenize
+from tqdm import tqdm
 from transformers import AutoTokenizer
 
 
@@ -10,10 +11,10 @@ class SplitText:
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-german-cased")
         logging.getLogger("transformers.tokenization_utils_base").setLevel(logging.ERROR)
 
-    def split_dataframe_texts(self, df, text_col_name, max_length=512):
+    def split_dataframe_texts(self, df, text_col_name, max_length=512, sentence_level=False):
         df_split = pd.DataFrame(columns=df.columns)
-        for _, row in df.iterrows():
-            texts = self._split_text(row[text_col_name], max_length)
+        for _, row in tqdm(df.iterrows(), total=df.shape[0]):
+            texts = self._split_text(row[text_col_name], max_length, sentence_level)
             for text in texts:
                 new_row = row.copy()
                 new_row[text_col_name] = text
@@ -21,7 +22,7 @@ class SplitText:
 
         return df_split
 
-    def _split_text(self, text, max_length):
+    def _split_text(self, text, max_length, sentence_level=False):
         sentences = sent_tokenize(text)
 
         if len(sentences) < 3:
@@ -32,6 +33,9 @@ class SplitText:
             sentences[i] = self._remove_greeting_sentence(sentences[i])
             sentences[len(sentences) - i - 1] = self._remove_greeting_sentence(sentences[len(sentences) - i - 1])
         sentences = [sentence for sentence in sentences if sentence is not None]
+
+        if sentence_level:
+            return sentences
 
         filtered_text = " ".join(sentences).strip()
         tokens = self.tokenizer.tokenize(filtered_text)

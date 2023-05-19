@@ -1,0 +1,4 @@
+outs:
+- md5: 31fe552d434f31e1931e03096196e1d5
+  size: 14667658
+  path: party_programs_sentence.parquet

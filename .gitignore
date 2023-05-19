@@ -210,3 +210,4 @@ data/party_programs/**/*.pdf
 /data/embeddings/*.pkl
 /data/embeddings/*.txt
 /data/embeddings/*.model
+studienarbeit/modeling/
