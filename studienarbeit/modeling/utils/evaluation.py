@@ -27,5 +27,5 @@ def evaluate_test_results(y_pred, y_test, results_folder):
 
     conf_mat = confusion_matrix(y_test_num, y_pred, normalize="true")
     disp = ConfusionMatrixDisplay(confusion_matrix=conf_mat, display_labels=party_encoding.keys())
-    disp.plot(cmap=plt.cm.Blues)
+    disp.plot()
     plt.savefig(f"{results_folder}/confusion_matrix.png", dpi=300)
