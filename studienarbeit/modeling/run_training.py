@@ -138,7 +138,7 @@ def dnn(
         X_train_vec, y_train = get_sampled_data(X_train_vec, y_train, sampling)
         logger.info(f"Sampled data with {sampling}sampling.")
 
-    dnn_approach = DNNApproach(num_classes, None, MAX_FEATURES)
+    dnn_approach = DNNApproach(num_classes, None, X_train_vec.shape[1])
     model = dnn_approach.build_model(variation)
 
     y_pred = train_keras_model(
@@ -163,7 +163,7 @@ def cnn(
     df = load_dataset(dataset, num_samples, sentence_level)
 
     X_train, X_val, X_test, y_train, y_val, y_test = get_split_data(df, "clean_text", "party", num_classes, True, True)
-    X_train_vec, X_val_vec, X_test_vec, word_index = get_vectorized_input_data(
+    X_train_vec, X_val_vec, X_test_vec, word_index, adapted_max_len = get_vectorized_input_data(
         X_train, X_val, X_test, max_vocab_size=MAX_FEATURES, max_len=MAXLEN
     )
 
@@ -174,9 +174,9 @@ def cnn(
     embedding_obj: GloVe | Word2Vec
     match (embeddings):
         case "glove":
-            embedding_obj = GloVe(max_vocab_size=MAX_FEATURES, max_len=MAXLEN, embedding_dim=300)
+            embedding_obj = GloVe(max_vocab_size=MAX_FEATURES, max_len=adapted_max_len, embedding_dim=300)
         case "word2vec":
-            embedding_obj = Word2Vec(max_vocab_size=MAX_FEATURES, max_len=MAXLEN, embedding_dim=300)
+            embedding_obj = Word2Vec(max_vocab_size=MAX_FEATURES, max_len=adapted_max_len, embedding_dim=300)
         case _:
             raise ValueError("Invalid embeddings.")
 

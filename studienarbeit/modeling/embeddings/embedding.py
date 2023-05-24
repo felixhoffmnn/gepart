@@ -14,11 +14,10 @@ class Embedding(ABC):
 
     def build_embedding_matrix(self, word_index: Any):
         vocab_size = len(word_index) + 1
-        max_words = min(self.max_vocab_size, len(word_index))
         self.embedding_matrix = np.zeros((vocab_size, self.embedding_dim))
 
         for word, idx in word_index.items():
-            if idx >= max_words:
+            if idx >= vocab_size:
                 continue
             embedding_vector = self.embed(word)
             if embedding_vector is not None:

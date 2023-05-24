@@ -120,7 +120,7 @@ def get_bert_data(df, tokenizer, sampling="none"):
     return train_hg, val_hg, test_hg
 
 
-def get_vectorized_input_data(X_train, X_val, X_test, max_vocab_size=50000, max_len=500):
+def get_vectorized_input_data(X_train, X_val, X_test, max_vocab_size, max_len):
     tokenizer = Tokenizer(lower=True, split=" ", num_words=max_vocab_size)
     tokenizer.fit_on_texts(X_train)
 
@@ -128,11 +128,17 @@ def get_vectorized_input_data(X_train, X_val, X_test, max_vocab_size=50000, max_
     X_val_vec = tokenizer.texts_to_sequences(X_val)
     X_test_vec = tokenizer.texts_to_sequences(X_test)
 
-    X_train_vec_pad = pad_sequences(X_train_vec, maxlen=max_len, truncating="post", padding="post")
-    X_val_vec_pad = pad_sequences(X_val_vec, maxlen=max_len, truncating="post", padding="post")
-    X_test_vec_pad = pad_sequences(X_test_vec, maxlen=max_len, truncating="post", padding="post")
+    seq_lengths = [len(x) for x in X_train_vec]
+    max_train_len = int(np.percentile(seq_lengths, 99))
 
-    return X_train_vec_pad, X_val_vec_pad, X_test_vec_pad, tokenizer.word_index
+    adapted_max_len = min(max_len, max_train_len)
+    logger.info(f"Adapted max sequence length: min(99th percentile, fixed max length): {adapted_max_len}")
+
+    X_train_vec_pad = pad_sequences(X_train_vec, maxlen=adapted_max_len, truncating="post", padding="post")
+    X_val_vec_pad = pad_sequences(X_val_vec, maxlen=adapted_max_len, truncating="post", padding="post")
+    X_test_vec_pad = pad_sequences(X_test_vec, maxlen=adapted_max_len, truncating="post", padding="post")
+
+    return X_train_vec_pad, X_val_vec_pad, X_test_vec_pad, tokenizer.word_index, adapted_max_len
 
 
 def get_sampled_data(X_train, y_train, sampling="under"):
