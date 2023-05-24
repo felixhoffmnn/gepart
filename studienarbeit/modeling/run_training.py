@@ -256,4 +256,4 @@ def bert(
 
 
 if __name__ == "__main__":
-    fire.Fire()
+    fire.Fire(component={"fasttext": fasttext, "sklearn": sklearn, "dnn": dnn, "cnn": cnn, "bert": bert})
