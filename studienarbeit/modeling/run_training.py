@@ -3,7 +3,6 @@ import fire
 import numpy as np
 import pandas as pd
 from loguru import logger
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.svm import LinearSVC
 from transformers import (
@@ -23,6 +22,7 @@ from studienarbeit.modeling.utils.data import (
     get_sampled_data,
     get_split_data,
     get_vectorized_input_data,
+    get_vectorizer,
     load_dataset,
     writeFasttextFiles,
 )
@@ -82,17 +82,12 @@ def sklearn(
 ):
     df = load_dataset(dataset, num_samples, sentence_level)
 
-    X_train, X_test, y_train, y_test = get_split_data(df, "tokenized_text", "party", num_classes, False)
+    X_train, X_test, y_train, y_test = get_split_data(df, "tokenized_text", "party", num_classes, False, False)
 
-    if representation == "tf-idf":
-        vectorizer = TfidfVectorizer(lowercase=True, max_features=MAX_FEATURES)
-    elif representation == "bow":
-        vectorizer = CountVectorizer(lowercase=True, max_features=MAX_FEATURES)
-    else:
-        raise ValueError("Invalid representation for DNN approach.")
+    vectorizer = get_vectorizer(representation, MAX_FEATURES)
 
     X_train_vec = vectorizer.fit_transform(X_train).toarray()
-    X_test_vec = vectorizer.fit_transform(X_test).toarray()
+    X_test_vec = vectorizer.transform(X_test).toarray()
 
     if sampling != "none":
         X_train_vec, y_train = get_sampled_data(X_train_vec, y_train, sampling)
@@ -129,15 +124,11 @@ def dnn(
 ):
     df = load_dataset(dataset, num_samples, sentence_level)
 
-    X_train, X_val, X_test, y_train, y_val, y_test = get_split_data(df, "tokenized_text", "party", num_classes)
+    X_train, X_val, X_test, y_train, y_val, y_test = get_split_data(
+        df, "tokenized_text", "party", num_classes, True, True
+    )
 
-    match (representation):
-        case "tf-idf":
-            vectorizer = TfidfVectorizer(lowercase=True, max_features=MAX_FEATURES)
-        case "bow":
-            vectorizer = CountVectorizer(lowercase=True, max_features=MAX_FEATURES)
-        case _:
-            raise ValueError("Invalid representation for DNN approach.")
+    vectorizer = get_vectorizer(representation, MAX_FEATURES)
 
     X_train_vec = vectorizer.fit_transform(X_train).toarray()
     X_val_vec = vectorizer.transform(X_val).toarray()
@@ -171,7 +162,7 @@ def cnn(
 ):
     df = load_dataset(dataset, num_samples, sentence_level)
 
-    X_train, X_val, X_test, y_train, y_val, y_test = get_split_data(df, "clean_text", "party", num_classes)
+    X_train, X_val, X_test, y_train, y_val, y_test = get_split_data(df, "clean_text", "party", num_classes, True, True)
     X_train_vec, X_val_vec, X_test_vec, word_index = get_vectorized_input_data(
         X_train, X_val, X_test, max_vocab_size=MAX_FEATURES, max_len=MAXLEN
     )

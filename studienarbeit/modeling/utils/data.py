@@ -11,6 +11,7 @@ from keras.preprocessing.text import Tokenizer
 from keras.utils import to_categorical
 from keras_preprocessing.sequence import pad_sequences
 from loguru import logger
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
@@ -169,3 +170,15 @@ def writeFasttextFiles(X_train, X_test, y_train, y_test):
     with open("cache/test_ft.txt", "w") as f:
         for party, text in zip(y_test, X_test):
             f.write(f"__label__{party} {text}\n")
+
+
+def get_vectorizer(representation, max_features):
+    match (representation):
+        case "tf-idf":
+            return TfidfVectorizer(
+                analyzer="word", max_df=0.3, min_df=10, ngram_range=(1, 2), norm="l2", max_features=max_features
+            )
+        case "bow":
+            return CountVectorizer(lowercase=True, max_features=max_features)
+        case _:
+            raise ValueError("Invalid representation for DNN approach.")
