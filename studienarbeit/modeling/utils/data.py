@@ -20,17 +20,17 @@ from tqdm import tqdm
 
 
 def load_dataset(dataset: str, num_samples: int, sentence_level: bool = True, data_prefix: str = "../.."):
-    def load_party_programs():
+    def load_party_programs() -> pd.DataFrame:
         return pd.read_parquet(
             data_dir_pp / ("party_programs_sentence.parquet" if sentence_level else "party_programs.parquet")
         )[["party", "clean_text", "tokenized_text"]]
 
-    def load_speeches():
+    def load_speeches() -> pd.DataFrame:
         return pd.read_parquet(
             data_dir_speeches / ("speeches_sentence.parquet" if sentence_level else "speeches.parquet")
         )[["party", "clean_text", "tokenized_text"]]
 
-    def load_tweets():
+    def load_tweets() -> pd.DataFrame:
         df_tweets = pd.read_parquet(data_dir_tweets / "prep_tweets_sent_full.parquet")[
             ["party", "clean_text", "filter_text"]
         ]
@@ -41,6 +41,8 @@ def load_dataset(dataset: str, num_samples: int, sentence_level: bool = True, da
     data_dir_pp = Path(f"{data_prefix}/data/party_programs")
     data_dir_speeches = Path(f"{data_prefix}/data/speeches")
     data_dir_tweets = Path(f"{data_prefix}/data/tweets/dataframes")
+
+    logger.debug("Loading dataset...")
 
     if dataset == "speeches":
         df = load_speeches()
@@ -53,9 +55,8 @@ def load_dataset(dataset: str, num_samples: int, sentence_level: bool = True, da
         df_speeches = load_speeches()
         df_tweets = load_tweets()
 
-        if (df_pp | df_speeches | df_tweets) is None:
-            logger.error("No dataset found.")
-            sys.exit(1)
+        if df_pp.empty or df_speeches.empty or df_tweets.empty:
+            logger.warning("At least one dataset is empty.")
 
         df = pd.concat([df_pp, df_speeches, df_tweets], ignore_index=True)
     else:
