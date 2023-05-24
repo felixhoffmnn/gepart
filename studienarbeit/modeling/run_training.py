@@ -105,7 +105,14 @@ def fasttext(
     df_test["prediction"] = df_test["text"].apply(lambda x: int(model.predict(x)[0][0].replace("__label__", "")))
 
     results_folder = f"./results/fasttext/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{epochs}_{learning_rate}_{word_ngrams}"
-    evaluate_test_results(np.array(df_test["prediction"]), np.array(df_test["party"]), results_folder, DATA_PREFIX)
+    class_distribution = pd.Series(y_train).value_counts().to_dict()
+    evaluate_test_results(
+        np.array(df_test["prediction"]),
+        np.array(df_test["party"]),
+        results_folder,
+        class_distribution,
+        DATA_PREFIX,
+    )
 
 
 def sklearn(
@@ -144,7 +151,8 @@ def sklearn(
     results_folder = (
         f"./results/sklearn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{representation}_{model}"
     )
-    evaluate_test_results(y_pred, y_test, results_folder, DATA_PREFIX)
+    class_distribution = pd.Series(y_train).value_counts().to_dict()
+    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, DATA_PREFIX)
 
 
 def dnn(
@@ -182,7 +190,8 @@ def dnn(
         model, X_train_vec, y_train, X_val_vec, y_val, X_test_vec, batch_size, epochs, learning_rate
     )
     results_folder = f"./results/dnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{representation}_{epochs}_{learning_rate}_{batch_size}"
-    evaluate_test_results(y_pred, y_test, results_folder, DATA_PREFIX)
+    class_distribution = pd.Series(y_train).value_counts().to_dict()
+    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, DATA_PREFIX)
 
 
 def cnn(
@@ -226,7 +235,8 @@ def cnn(
         model, X_train_vec, y_train, X_val_vec, y_val, X_test_vec, batch_size, epochs, learning_rate
     )
     results_folder = f"./results/cnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{embeddings}_{epochs}_{learning_rate}_{batch_size}"
-    evaluate_test_results(y_pred, y_test, results_folder, DATA_PREFIX)
+    class_distribution = pd.Series(y_train).value_counts().to_dict()
+    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, DATA_PREFIX)
 
 
 def bert(
@@ -280,7 +290,8 @@ def bert(
     y_pred = np.argmax(y_pred.predictions, axis=1)
     y_test = test_hg["label"]
     results_folder = f"./results/bert/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{model_checkpoint}_{epochs}_{learning_rate}_{batch_size}"
-    evaluate_test_results(y_pred, y_test, results_folder, DATA_PREFIX)
+    class_distribution = pd.Series(train_hg["label"]).value_counts().to_dict()
+    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, DATA_PREFIX)
 
 
 if __name__ == "__main__":
