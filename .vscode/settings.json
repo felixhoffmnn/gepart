@@ -15,5 +15,5 @@
   "python.linting.mypyEnabled": true,
   "python.linting.pylintEnabled": true,
   "python.linting.flake8Enabled": true,
-  "python.linting.pylintArgs": ["--generated-members=numpy.* ,torch.* ,fasttext.*"]
+  "python.linting.pylintArgs": ["--generated-members=numpy.* ,torch.* ,fasttext.*, keras.*, tf.*"]
 }

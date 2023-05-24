@@ -1,3 +1,5 @@
+from enum import Enum
+
 import fasttext as ft
 import fire
 import numpy as np
@@ -18,13 +20,13 @@ from studienarbeit.modeling.approaches.dnn import DNNApproach
 from studienarbeit.modeling.embeddings.glove import GloVe
 from studienarbeit.modeling.embeddings.word2vec import Word2Vec
 from studienarbeit.modeling.utils.data import (
+    cache_fasttext_files,
     get_bert_data,
     get_sampled_data,
     get_split_data,
     get_vectorized_input_data,
     get_vectorizer,
     load_dataset,
-    writeFasttextFiles,
 )
 from studienarbeit.modeling.utils.evaluation import evaluate_test_results
 from studienarbeit.modeling.utils.huggingface import compute_metrics
@@ -33,26 +35,61 @@ from studienarbeit.modeling.utils.keras import train_keras_model
 MAX_FEATURES = 100000
 MAXLEN = 500
 
+# The DATA_PREFIX is intended to be modified by the user.
+DATA_PREFIX = "."
+
+
+class Dataset(str, Enum):
+    SPEECHES = "speeches"
+    PARTY_PROGRAMS = "party_programs"
+    TWEETS = "tweets"
+    ALL = "all"
+
+
+class Sampling(str, Enum):
+    NONE = "none"
+    OVER = "over"
+    UNDER = "under"
+
 
 def fasttext(
-    dataset: str,
+    dataset: Dataset,
     sentence_level: bool,
     num_samples: int,
-    sampling: str,
+    sampling: Sampling,
     num_classes: int,
     epochs: int = 5,
     learning_rate: float = 0.1,
     word_ngrams: int = 2,
 ):
-    df = load_dataset(dataset, num_samples, sentence_level)
+    """Function enabling the training of a fasttext model.
+
+    Fasttext is a library by Facebook Research that uses bag-of-n-grams to classify text.
+
+    Parameters
+    ----------
+    dataset : Dataset
+        The dataset to use for training. Can be one of "speeches", "party_programs", "tweets", "all".
+    num_samples : int
+        The number of samples to use for training. If 0, all samples are used.
+    sampling : Sampling
+        The sampling strategy to use. Can be one of "none", "over", "under".
+    epochs : int, optional
+        The number of epochs to train the model for. _By default `5`_
+    learning_rate : float, optional
+        The learning rate to use for training. _By default `0.1`_
+    word_ngrams : int, optional
+        The number of n-grams to use for training. _By default `2`_
+    """
+    df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     X_train, X_test, y_train, y_test = get_split_data(df, "tokenized_text", "party", num_classes, False, False)
 
-    if sampling != "none":
+    if sampling != Sampling.NONE:
         X_train, y_train = get_sampled_data(X_train, y_train, sampling)
-        logger.info(f"Sampled data with {sampling}sampling.")
+        logger.info(f"Sampled data with {sampling} sampling.")
 
-    writeFasttextFiles(X_train, X_test, y_train, y_test)
+    cache_fasttext_files(X_train, X_test, y_train, y_test)
 
     model = ft.train_supervised(
         input="cache/train_ft.txt",
@@ -61,26 +98,26 @@ def fasttext(
         wordNgrams=word_ngrams,
         loss="softmax",
         dim=300,
-        pretrainedVectors="cc.de.300.vec",
+        pretrainedVectors="studienarbeit/modeling/cc.de.300.vec",
     )
 
     df_test = pd.DataFrame({"text": X_test, "party": y_test})
     df_test["prediction"] = df_test["text"].apply(lambda x: int(model.predict(x)[0][0].replace("__label__", "")))
 
-    results_folder = f"results/fasttext/{dataset}_{sentence_level}_{num_samples}_{sampling}_{num_classes}_{epochs}_{learning_rate}_{word_ngrams}"
-    evaluate_test_results(np.array(df_test["prediction"]), np.array(df_test["party"]), results_folder)
+    results_folder = f"./results/fasttext/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{epochs}_{learning_rate}_{word_ngrams}"
+    evaluate_test_results(np.array(df_test["prediction"]), np.array(df_test["party"]), results_folder, DATA_PREFIX)
 
 
 def sklearn(
-    dataset: str,
+    dataset: Dataset,
     sentence_level: bool,
     num_samples: int,
-    sampling: str,
+    sampling: Sampling,
     num_classes: int,
     representation: str,
     model: str,
 ):
-    df = load_dataset(dataset, num_samples, sentence_level)
+    df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     X_train, X_test, y_train, y_test = get_split_data(df, "tokenized_text", "party", num_classes, False, False)
 
@@ -89,7 +126,7 @@ def sklearn(
     X_train_vec = vectorizer.fit_transform(X_train).toarray()
     X_test_vec = vectorizer.transform(X_test).toarray()
 
-    if sampling != "none":
+    if sampling != Sampling.NONE:
         X_train_vec, y_train = get_sampled_data(X_train_vec, y_train, sampling)
         logger.info(f"Sampled data with {sampling}sampling.")
 
@@ -105,16 +142,16 @@ def sklearn(
 
     y_pred = classifier.predict(X_test_vec)
     results_folder = (
-        f"results/sklearn/{dataset}_{sentence_level}_{num_samples}_{sampling}_{num_classes}_{representation}_{model}"
+        f"./results/sklearn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{representation}_{model}"
     )
-    evaluate_test_results(y_pred, y_test, results_folder)
+    evaluate_test_results(y_pred, y_test, results_folder, DATA_PREFIX)
 
 
 def dnn(
-    dataset: str,
+    dataset: Dataset,
     sentence_level: bool,
     num_samples: int,
-    sampling: str,
+    sampling: Sampling,
     num_classes: int,
     variation: int,
     representation: str,
@@ -122,7 +159,7 @@ def dnn(
     learning_rate: float,
     batch_size: int,
 ):
-    df = load_dataset(dataset, num_samples, sentence_level)
+    df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     X_train, X_val, X_test, y_train, y_val, y_test = get_split_data(
         df, "tokenized_text", "party", num_classes, True, True
@@ -134,7 +171,7 @@ def dnn(
     X_val_vec = vectorizer.transform(X_val).toarray()
     X_test_vec = vectorizer.transform(X_test).toarray()
 
-    if sampling != "none":
+    if sampling != Sampling.NONE:
         X_train_vec, y_train = get_sampled_data(X_train_vec, y_train, sampling)
         logger.info(f"Sampled data with {sampling}sampling.")
 
@@ -144,15 +181,15 @@ def dnn(
     y_pred = train_keras_model(
         model, X_train_vec, y_train, X_val_vec, y_val, X_test_vec, batch_size, epochs, learning_rate
     )
-    results_folder = f"results/dnn/{dataset}_{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{representation}_{epochs}_{learning_rate}_{batch_size}"
-    evaluate_test_results(y_pred, y_test, results_folder)
+    results_folder = f"./results/dnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{representation}_{epochs}_{learning_rate}_{batch_size}"
+    evaluate_test_results(y_pred, y_test, results_folder, DATA_PREFIX)
 
 
 def cnn(
-    dataset: str,
+    dataset: Dataset,
     sentence_level: bool,
     num_samples: int,
-    sampling: str,
+    sampling: Sampling,
     num_classes: int,
     variation: int,
     embeddings: str,
@@ -160,14 +197,14 @@ def cnn(
     learning_rate: float,
     batch_size: int,
 ):
-    df = load_dataset(dataset, num_samples, sentence_level)
+    df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     X_train, X_val, X_test, y_train, y_val, y_test = get_split_data(df, "clean_text", "party", num_classes, True, True)
     X_train_vec, X_val_vec, X_test_vec, word_index, adapted_max_len = get_vectorized_input_data(
         X_train, X_val, X_test, max_vocab_size=MAX_FEATURES, max_len=MAXLEN
     )
 
-    if sampling != "none":
+    if sampling != Sampling.NONE:
         X_train_vec, y_train = get_sampled_data(X_train_vec, y_train, sampling)
         logger.info(f"Sampled data with {sampling}sampling.")
 
@@ -188,22 +225,22 @@ def cnn(
     y_pred = train_keras_model(
         model, X_train_vec, y_train, X_val_vec, y_val, X_test_vec, batch_size, epochs, learning_rate
     )
-    results_folder = f"results/cnn/{dataset}_{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{embeddings}_{epochs}_{learning_rate}_{batch_size}"
-    evaluate_test_results(y_pred, y_test, results_folder)
+    results_folder = f"./results/cnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{embeddings}_{epochs}_{learning_rate}_{batch_size}"
+    evaluate_test_results(y_pred, y_test, results_folder, DATA_PREFIX)
 
 
 def bert(
-    dataset: str,
+    dataset: Dataset,
     sentence_level: bool,
     num_samples: int,
-    sampling: str,
+    sampling: Sampling,
     num_classes: int,
     model_checkpoint: str = "distilbert-base-german-cased",
     epochs: int = 2,
     learning_rate: float = 7e-5,
     batch_size: int = 4,
 ):
-    df = load_dataset(dataset, num_samples, sentence_level)
+    df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
     model = AutoModelForSequenceClassification.from_pretrained(model_checkpoint, num_labels=num_classes)
@@ -242,8 +279,8 @@ def bert(
     y_pred = trainer.predict(test_hg)
     y_pred = np.argmax(y_pred.predictions, axis=1)
     y_test = test_hg["label"]
-    results_folder = f"results/bert/{dataset}_{sentence_level}_{num_samples}_{sampling}_{num_classes}_{model_checkpoint}_{epochs}_{learning_rate}_{batch_size}"
-    evaluate_test_results(y_pred, y_test, results_folder)
+    results_folder = f"./results/bert/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{model_checkpoint}_{epochs}_{learning_rate}_{batch_size}"
+    evaluate_test_results(y_pred, y_test, results_folder, DATA_PREFIX)
 
 
 if __name__ == "__main__":

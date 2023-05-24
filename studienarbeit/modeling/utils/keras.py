@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from tensorflow.keras.callbacks import EarlyStopping
-from tensorflow.keras.optimizers.legacy import Adam
+from keras.callbacks import EarlyStopping
+from keras.optimizers import Adam
 
 
 def train_keras_model(model, X_train_vec, y_train, X_val_vec, y_val, X_test_vec, batch_size, epochs, learning_rate):
