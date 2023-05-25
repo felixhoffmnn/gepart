@@ -87,7 +87,12 @@ def fasttext(
 
     if sampling != Sampling.NONE:
         X_train, y_train = get_sampled_data(X_train, y_train, sampling)
-        logger.info(f"Sampled data with {sampling} sampling.")
+        logger.success(f"Sampled data with {sampling} sampling.")
+
+    count_entries = X_train.shape[0] + X_test.shape[0]
+    logger.info(
+        f"Train and test data with a ratio of {X_train.shape[0] / count_entries}/{X_test.shape[0] / count_entries}"
+    )
 
     cache_fasttext_files(X_train, X_test, y_train, y_test)
 
@@ -106,11 +111,18 @@ def fasttext(
 
     results_folder = f"./results/fasttext/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{epochs}_{learning_rate}_{word_ngrams}"
     class_distribution = pd.Series(y_train).value_counts().to_dict()
+    count_df = {
+        "train": X_train.shape[0],
+        "test": X_test.shape[0],
+        "total": count_entries,
+        "ratio": {"train": X_train.shape[0] / count_entries, "test": X_test.shape[0] / count_entries},
+    }
     evaluate_test_results(
         np.array(df_test["prediction"]),
         np.array(df_test["party"]),
         results_folder,
         class_distribution,
+        count_df,
         DATA_PREFIX,
     )
 
@@ -135,7 +147,12 @@ def sklearn(
 
     if sampling != Sampling.NONE:
         X_train_vec, y_train = get_sampled_data(X_train_vec, y_train, sampling)
-        logger.info(f"Sampled data with {sampling}sampling.")
+        logger.success(f"Sampled data with {sampling}sampling.")
+
+    count_entries = X_train_vec.shape[0] + X_test_vec.shape[0]
+    logger.info(
+        f"Train and test data with a ratio of {X_train_vec.shape[0] / count_entries}/{X_test_vec.shape[0] / count_entries}"
+    )
 
     match (model):
         case "logistic_regression":
@@ -152,7 +169,13 @@ def sklearn(
         f"./results/sklearn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{representation}_{model}"
     )
     class_distribution = pd.Series(y_train).value_counts().to_dict()
-    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, DATA_PREFIX)
+    count_df = {
+        "train": X_train.shape[0],
+        "test": X_test.shape[0],
+        "total": count_entries,
+        "ratio": {"train": X_train_vec.shape[0] / count_entries, "test": X_test_vec.shape[0] / count_entries},
+    }
+    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, count_df, DATA_PREFIX)
 
 
 def dnn(
@@ -181,9 +204,14 @@ def dnn(
 
     if sampling != Sampling.NONE:
         X_train_vec, y_train = get_sampled_data(X_train_vec, y_train, sampling)
-        logger.info(f"Sampled data with {sampling}sampling.")
+        logger.success(f"Sampled data with {sampling}sampling.")
 
-    dnn_approach = DNNApproach(num_classes, None, X_train_vec.shape[1])
+    count_entries = X_train_vec.shape[0] + X_test_vec.shape[0] + X_val_vec.shape[0]
+    logger.info(
+        f"Train and test data with a ratio of {X_train_vec.shape[0] / count_entries}/{X_test_vec.shape[0] / count_entries}/{X_val_vec.shape[0] / count_entries}"
+    )
+
+    dnn_approach = DNNApproach(num_classes, None, X_train_vec.shape[0])
     model = dnn_approach.build_model(variation)
 
     y_pred = train_keras_model(
@@ -191,7 +219,18 @@ def dnn(
     )
     results_folder = f"./results/dnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{representation}_{epochs}_{learning_rate}_{batch_size}"
     class_distribution = pd.Series(y_train).value_counts().to_dict()
-    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, DATA_PREFIX)
+    count_df = {
+        "train": X_train.shape[0],
+        "test": X_test.shape[0],
+        "val": X_val.shape[0],
+        "total": count_entries,
+        "ratio": {
+            "train": X_train_vec.shape[0] / count_entries,
+            "test": X_test_vec.shape[0] / count_entries,
+            "val": X_val_vec.shape[0] / count_entries,
+        },
+    }
+    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, count_df, DATA_PREFIX)
 
 
 def cnn(
@@ -215,7 +254,12 @@ def cnn(
 
     if sampling != Sampling.NONE:
         X_train_vec, y_train = get_sampled_data(X_train_vec, y_train, sampling)
-        logger.info(f"Sampled data with {sampling}sampling.")
+        logger.success(f"Sampled data with {sampling}sampling.")
+
+    count_entries = X_train_vec.shape[0] + X_test_vec.shape[0] + X_val_vec.shape[0]
+    logger.info(
+        f"Train and test data with a ratio of {X_train_vec.shape[0] / count_entries}/{X_test_vec.shape[0] / count_entries}/{X_val_vec.shape[0] / count_entries}"
+    )
 
     embedding_obj: GloVe | Word2Vec
     match (embeddings):
@@ -236,7 +280,18 @@ def cnn(
     )
     results_folder = f"./results/cnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{embeddings}_{epochs}_{learning_rate}_{batch_size}"
     class_distribution = pd.Series(y_train).value_counts().to_dict()
-    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, DATA_PREFIX)
+    count_df = {
+        "train": X_train.shape[0],
+        "test": X_test.shape[0],
+        "val": X_val.shape[0],
+        "total": count_entries,
+        "ratio": {
+            "train": X_train_vec.shape[0] / count_entries,
+            "test": X_test_vec.shape[0] / count_entries,
+            "val": X_val_vec.shape[0] / count_entries,
+        },
+    }
+    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, count_df, DATA_PREFIX)
 
 
 def bert(
@@ -284,6 +339,11 @@ def bert(
         callbacks=[EarlyStoppingCallback(early_stopping_patience=5)],
     )
 
+    count_entries = train_hg.shape[0] + test_hg.shape[0] + val_hg.shape[0]
+    logger.info(
+        f"Train and test data with a ratio of {train_hg.shape[0] / count_entries}/{test_hg.shape[0] / count_entries}/{val_hg.shape[0] / count_entries}"
+    )
+
     trainer.train()
 
     y_pred = trainer.predict(test_hg)
@@ -291,7 +351,18 @@ def bert(
     y_test = test_hg["label"]
     results_folder = f"./results/bert/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{model_checkpoint}_{epochs}_{learning_rate}_{batch_size}"
     class_distribution = pd.Series(train_hg["label"]).value_counts().to_dict()
-    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, DATA_PREFIX)
+    count_df = {
+        "train": train_hg.shape[0],
+        "test": test_hg.shape[0],
+        "val": val_hg.shape[0],
+        "total": count_entries,
+        "ratio": {
+            "train": train_hg.shape[0] / count_entries,
+            "test": test_hg.shape[0] / count_entries,
+            "val": val_hg.shape[0] / count_entries,
+        },
+    }
+    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, count_df, DATA_PREFIX)
 
 
 if __name__ == "__main__":
