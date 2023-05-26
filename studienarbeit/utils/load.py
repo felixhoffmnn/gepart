@@ -12,8 +12,9 @@ class EDataTypes(str, Enum):
 
 
 class Load:
-    def __init__(self, data_type: EDataTypes, data_dir: str | Path = "../../data"):
+    def __init__(self, data_type: EDataTypes, data_dir: str | Path = "../../data") -> None:
         """Initialize the Load class with the data directory to your data.
+
         For example, if you want to load the data for the `tweets`, the `data_dir` should be `../../data/tweets`.
         This parameter severs the purpose to reduce the length when loading an individual file.
 

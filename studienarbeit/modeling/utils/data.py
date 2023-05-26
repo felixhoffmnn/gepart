@@ -16,8 +16,6 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
-# from keras.preprocessing.text import Tokenizer
-
 
 def load_dataset(dataset: str, num_samples: int, sentence_level: bool = True, data_prefix: str = "../.."):
     def load_party_programs() -> pd.DataFrame:
@@ -91,7 +89,7 @@ def get_split_data(
         y_test = np.array(test[label_col])
 
     if include_validation:
-        return X_train, X_val, X_test, y_train, y_val, y_test  # type: ignore
+        return X_train, X_val, X_test, y_train, y_val, y_test
 
     return X_train, X_test, y_train, y_test
 
@@ -133,7 +131,6 @@ def get_bert_data(df, tokenizer, sampling="none"):
 
 
 def get_vectorized_input_data(X_train, X_val, X_test, max_vocab_size, max_len):
-    # tokenizer = Tokenizer(lower=True, split=" ", num_words=max_vocab_size)
     tokenizer = TextVectorization(
         max_tokens=max_vocab_size, standardize="lower", split="whitespace", output_sequence_length=max_len
     )
@@ -185,11 +182,11 @@ def cache_fasttext_files(X_train, X_test, y_train, y_test):
         os.mkdir("cache/")
 
     with open("cache/train_ft.txt", "w", encoding="utf-8") as f:
-        for party, text in zip(y_train, X_train):
+        for party, text in zip(y_train, X_train, strict=True):
             f.write(f"__label__{party} {text}\n")
 
     with open("cache/test_ft.txt", "w", encoding="utf-8") as f:
-        for party, text in zip(y_test, X_test):
+        for party, text in zip(y_test, X_test, strict=True):
             f.write(f"__label__{party} {text}\n")
 
 

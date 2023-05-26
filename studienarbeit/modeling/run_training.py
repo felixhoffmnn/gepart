@@ -33,7 +33,8 @@ from studienarbeit.modeling.utils.huggingface import compute_metrics
 from studienarbeit.modeling.utils.keras import train_keras_model
 
 MAX_FEATURES = 100000
-MAXLEN = 500
+MAX_LEN = 500
+DEFAULT_NUM_CLASSES = 6
 
 # The DATA_PREFIX is intended to be modified by the user.
 DATA_PREFIX = "."
@@ -57,11 +58,11 @@ def fasttext(
     sentence_level: bool,
     num_samples: int,
     sampling: Sampling,
-    num_classes: int,
+    num_classes: int = DEFAULT_NUM_CLASSES,
     epochs: int = 5,
     learning_rate: float = 0.1,
     word_ngrams: int = 2,
-):
+) -> None:
     """Function enabling the training of a fasttext model.
 
     Fasttext is a library by Facebook Research that uses bag-of-n-grams to classify text.
@@ -70,10 +71,15 @@ def fasttext(
     ----------
     dataset : Dataset
         The dataset to use for training. Can be one of "speeches", "party_programs", "tweets", "all".
+    sentence_level : bool
+        Whether to use sentence-level or document-level data. Use 0 for document-level and 1 for sentence-level.
     num_samples : int
         The number of samples to use for training. If 0, all samples are used.
     sampling : Sampling
         The sampling strategy to use. Can be one of "none", "over", "under".
+    num_classes : int, optional
+        The number of classes to use for training. This is not yet implemented but will be used in the future to
+        add a neutral class. _By default `6`_
     epochs : int, optional
         The number of epochs to train the model for. _By default `5`_
     learning_rate : float, optional
@@ -109,7 +115,7 @@ def fasttext(
     df_test = pd.DataFrame({"text": X_test, "party": y_test})
     df_test["prediction"] = df_test["text"].apply(lambda x: int(model.predict(x)[0][0].replace("__label__", "")))
 
-    results_folder = f"./results/fasttext/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{epochs}_{learning_rate}_{word_ngrams}"
+    results_folder = f"./studienarbeit/modeling/results/fasttext/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{epochs}_{learning_rate}_{word_ngrams}"
     class_distribution = pd.Series(y_train).value_counts().to_dict()
     count_df = {
         "train": X_train.shape[0],
@@ -135,7 +141,7 @@ def sklearn(
     num_classes: int,
     representation: str,
     model: str,
-):
+) -> None:
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     X_train, X_test, y_train, y_test = get_split_data(df, "tokenized_text", "party", num_classes, False, False)
@@ -165,9 +171,7 @@ def sklearn(
     classifier.fit(X_train_vec, y_train)
 
     y_pred = classifier.predict(X_test_vec)
-    results_folder = (
-        f"./results/sklearn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{representation}_{model}"
-    )
+    results_folder = f"./studienarbeit/modeling/results/sklearn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{representation}_{model}"
     class_distribution = pd.Series(y_train).value_counts().to_dict()
     count_df = {
         "train": X_train.shape[0],
@@ -189,7 +193,7 @@ def dnn(
     epochs: int,
     learning_rate: float,
     batch_size: int,
-):
+) -> None:
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     X_train, X_val, X_test, y_train, y_val, y_test = get_split_data(
@@ -217,7 +221,7 @@ def dnn(
     y_pred = train_keras_model(
         model, X_train_vec, y_train, X_val_vec, y_val, X_test_vec, batch_size, epochs, learning_rate
     )
-    results_folder = f"./results/dnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{representation}_{epochs}_{learning_rate}_{batch_size}"
+    results_folder = f"./studienarbeit/modeling/results/dnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{representation}_{epochs}_{learning_rate}_{batch_size}"
     class_distribution = pd.Series(y_train).value_counts().to_dict()
     count_df = {
         "train": X_train.shape[0],
@@ -244,12 +248,12 @@ def cnn(
     epochs: int,
     learning_rate: float,
     batch_size: int,
-):
+) -> None:
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     X_train, X_val, X_test, y_train, y_val, y_test = get_split_data(df, "clean_text", "party", num_classes, True, True)
     X_train_vec, X_val_vec, X_test_vec, word_index, adapted_max_len = get_vectorized_input_data(
-        X_train, X_val, X_test, max_vocab_size=MAX_FEATURES, max_len=MAXLEN
+        X_train, X_val, X_test, max_vocab_size=MAX_FEATURES, max_len=MAX_LEN
     )
 
     if sampling != Sampling.NONE:
@@ -278,7 +282,7 @@ def cnn(
     y_pred = train_keras_model(
         model, X_train_vec, y_train, X_val_vec, y_val, X_test_vec, batch_size, epochs, learning_rate
     )
-    results_folder = f"./results/cnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{embeddings}_{epochs}_{learning_rate}_{batch_size}"
+    results_folder = f"./studienarbeit/modeling/results/cnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{embeddings}_{epochs}_{learning_rate}_{batch_size}"
     class_distribution = pd.Series(y_train).value_counts().to_dict()
     count_df = {
         "train": X_train.shape[0],
@@ -299,12 +303,12 @@ def bert(
     sentence_level: bool,
     num_samples: int,
     sampling: Sampling,
-    num_classes: int,
+    num_classes: int = DEFAULT_NUM_CLASSES,
     model_checkpoint: str = "distilbert-base-german-cased",
     epochs: int = 2,
     learning_rate: float = 7e-5,
     batch_size: int = 4,
-):
+) -> None:
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
@@ -349,7 +353,7 @@ def bert(
     y_pred = trainer.predict(test_hg)
     y_pred = np.argmax(y_pred.predictions, axis=1)
     y_test = test_hg["label"]
-    results_folder = f"./results/bert/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{model_checkpoint}_{epochs}_{learning_rate}_{batch_size}"
+    results_folder = f"./studienarbeit/modeling/results/bert/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{model_checkpoint}_{epochs}_{learning_rate}_{batch_size}"
     class_distribution = pd.Series(train_hg["label"]).value_counts().to_dict()
     count_df = {
         "train": train_hg.shape[0],

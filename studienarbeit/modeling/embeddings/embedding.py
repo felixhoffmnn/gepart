@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, List
+from typing import Any
 
 import numpy as np
 
@@ -9,7 +9,7 @@ class Embedding(ABC):
         self.max_vocab_size = max_vocab_size
         self.max_len = max_len
         self.embedding_dim = embedding_dim
-        self.corpus: List[List[str]]
+        self.corpus: list[list[str]]
         self.embedding_matrix: Any
 
     def build_embedding_matrix(self, word_index: Any):

@@ -69,10 +69,7 @@ def evaluate_test_results(
     with open(f"{data_prefix}/data/party_encoding.json", encoding="utf-8") as f:
         party_encoding = json.load(f)
 
-    if (type(y_test) != list) and (y_test.ndim == 2):
-        y_test_num = np.argmax(y_test, axis=1)
-    else:
-        y_test_num = y_test
+    y_test_num = np.argmax(y_test, axis=1) if type(y_test) != list and y_test.ndim == 2 else y_test
 
     Path(results_folder).mkdir(parents=True, exist_ok=True)
     for file in Path(results_folder).glob("*"):

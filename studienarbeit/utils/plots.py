@@ -14,9 +14,7 @@ tqdm.pandas()
 
 
 class Plots:
-    """
-    TODO: Plot count per day per party
-    """
+    """TODO: Plot count per day per party."""
 
     def __init__(
         self, data_type: EDataTypes, data_dir: str | Path = "../../data", party_palette: dict[str, str] | None = None
@@ -42,6 +40,7 @@ class Plots:
             EDataTypes.SPEECHES.value: "Reden",
             EDataTypes.PARTY_PROGRAMS.value: "Wahlprogramme",
         }
+
         return f"{title} ({data_type_names[self.data_type]})"
 
     def party_count(self, df: pd.DataFrame, column="party", title="Anzahl an Einträgen pro Partei"):

@@ -11,25 +11,10 @@ class SplitText:
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-german-cased")
         logging.getLogger("transformers.tokenization_utils_base").setLevel(logging.ERROR)
 
-    def split_dataframe_texts(self, df, text_col_name, max_length=512, sentence_level=False):
-        df_split = pd.DataFrame(columns=df.columns)
-        for _, row in tqdm(df.iterrows(), total=df.shape[0]):
-            texts = self._split_text(row[text_col_name], max_length, sentence_level)
-            for text in texts:
-                new_row = row.copy()
-                new_row[text_col_name] = text
-                df_split = df_split.append(new_row, ignore_index=True)
-
-        return df_split
-
     def _split_text(self, text, max_length, sentence_level=False):
         sentences = sent_tokenize(text)
 
-        if len(sentences) < 3:
-            num_check_sentences = len(sentences)
-        else:
-            num_check_sentences = 3
-        for i in range(num_check_sentences):
+        for i in range(len(sentences) if len(sentences) < 3 else 3):
             sentences[i] = self._remove_greeting_sentence(sentences[i])
             sentences[len(sentences) - i - 1] = self._remove_greeting_sentence(sentences[len(sentences) - i - 1])
         sentences = [sentence for sentence in sentences if sentence is not None]
@@ -64,3 +49,14 @@ class SplitText:
             return None
         else:
             return sentence
+
+    def split_dataframe_texts(self, df, text_col_name, max_length=512, sentence_level=False):
+        df_split = pd.DataFrame(columns=df.columns)
+        for _, row in tqdm(df.iterrows(), total=df.shape[0]):
+            texts = self._split_text(row[text_col_name], max_length, sentence_level)
+            for text in texts:
+                new_row = row.copy()
+                new_row[text_col_name] = text
+                df_split = df_split.append(new_row, ignore_index=True)
+
+        return df_split

@@ -9,7 +9,7 @@ from thinc.api import prefer_gpu
 
 
 class Cleaning:
-    """This class provides various methods to clean texts and tweets
+    """Various methods to clean texts and tweets.
 
     Source
     ------
@@ -17,7 +17,7 @@ class Cleaning:
     """
 
     def __init__(self) -> None:
-        """In order to clean text some models and lists are needed which gets loaded within the constructor"""
+        """In order to clean text some models and lists are needed which gets loaded within the constructor."""
         nltk.download("stopwords")
         nltk.download("punkt")
         self.stopwords_ger = nltk.corpus.stopwords.words("german")
@@ -28,7 +28,7 @@ class Cleaning:
         logger.info("Using GPU for cleaning." if prefer_gpu() else "Using CPU for cleaning.")
 
     def clean_text(self, text: str, keep_punctuation: bool = False, keep_upper: bool = False) -> str:
-        """Receives a text and removes all special characters, icons and usernames and returns the cleaned text
+        """Receives a text and removes all special characters, icons and usernames and returns the cleaned text.
 
         Parameters
         ----------
@@ -77,7 +77,7 @@ class Cleaning:
         return text
 
     def lemma_text(self, text: str) -> str:
-        """Takes a text and lemmatizes it
+        """Takes a text and lemmatizes it.
 
         Parameters
         ----------
@@ -96,7 +96,7 @@ class Cleaning:
         return lemma_tokens
 
     def filter_text(self, text: str) -> str:
-        """Using the list of tokens all stopwords are being removed and the remaining tokens are joined together
+        """Using the list of tokens all stopwords are being removed and the remaining tokens are joined together.
 
         Parameters
         ----------
@@ -113,14 +113,14 @@ class Cleaning:
         logger.debug("Stopwords removed.")
         return filtered_text
 
-    def clean_gender(self, text: str, gender_symbols: list[str] = ["*", ":"]) -> str:
-        """Removes 'gegenderte' words from a text
+    def clean_gender(self, text: str, gender_symbols: list[str] | tuple[str, str] = ("*", ":")) -> str:
+        """Removes 'gegenderte' words from a text.
 
         Parameters
         ----------
         text : str
             The text which should be cleaned
-        gender_symbols : list, optional
+        gender_symbols : tuple[str] | list[str], optional
             The symbols used in the text as gender symbols, by default ["*", ":"]
 
         Returns
@@ -152,7 +152,7 @@ class Cleaning:
         return text
 
     def pipeline(self, text: str) -> tuple[str, str, str]:
-        """A pipeline in order to combine all methods in order to clean a text
+        """A pipeline to combine all methods which clean and tokenize a text.
 
         Parameters
         ----------
