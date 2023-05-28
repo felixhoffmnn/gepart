@@ -41,11 +41,9 @@ repos:
     hooks:
       - id: check-case-conflict
         name: Check case conflict (check-case-conflict)
-        always_run: true
 
       - id: check-merge-conflict
         name: Check merge conflict (check-merge-conflict)
-        always_run: true
 
       - id: check-yaml
         name: Check yaml (check-yaml)

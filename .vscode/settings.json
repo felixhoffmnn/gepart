@@ -2,16 +2,14 @@
   "gitmoji.outputType": "emoji",
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-      "source.fixAll.ruff": true,
-      "source.organizeImports.ruff": true
-    }
-  },
-  "[toml]": {
-    "editor.defaultFormatter": "tamasfe.even-better-toml"
+      "source.organizeImports": true
+    },
+    "editor.formatOnType": true
   },
   "python.formatting.provider": "black",
   "autoDocstring.docstringFormat": "numpy",
-  "python.linting.mypyEnabled": true,
-  "python.linting.enabled": true
+  "python.linting.enabled": true,
+  "python.linting.mypyEnabled": true
 }

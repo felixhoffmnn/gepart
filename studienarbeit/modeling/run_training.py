@@ -1,9 +1,13 @@
+import time
 from enum import Enum
+from pathlib import Path
 
 import fasttext as ft
 import fire
 import numpy as np
 import pandas as pd
+import torch
+import torch.backends.mps
 from loguru import logger
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.svm import LinearSVC
@@ -53,6 +57,25 @@ class Sampling(str, Enum):
     UNDER = "under"
 
 
+class Device(str, Enum):
+    CPU = "cpu"
+    CUDA = "cuda"
+    MPS = "mps"
+
+
+def _get_available_device() -> Device:
+    if torch.cuda.is_available():
+        device = Device.CUDA
+    elif torch.backends.mps.is_available():
+        device = Device.MPS
+    else:
+        device = Device.CPU
+
+    logger.info(f"Detected {device.value}.")
+
+    return device
+
+
 def fasttext(
     dataset: Dataset,
     sentence_level: bool,
@@ -87,6 +110,9 @@ def fasttext(
     word_ngrams : int, optional
         The number of n-grams to use for training. _By default `2`_
     """
+    results_folder = Path(
+        f"./studienarbeit/modeling/results/fasttext/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{epochs}_{learning_rate}_{word_ngrams}/"
+    )
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     X_train, X_test, y_train, y_test = get_split_data(df, "tokenized_text", "party", num_classes, False, False)
@@ -102,6 +128,7 @@ def fasttext(
 
     cache_fasttext_files(X_train, X_test, y_train, y_test)
 
+    start_time = time.time()
     model = ft.train_supervised(
         input="cache/train_ft.txt",
         epoch=epochs,
@@ -111,23 +138,26 @@ def fasttext(
         dim=300,
         pretrainedVectors="studienarbeit/modeling/cc.de.300.vec",
     )
+    end_time = time.time()
 
     df_test = pd.DataFrame({"text": X_test, "party": y_test})
     df_test["prediction"] = df_test["text"].apply(lambda x: int(model.predict(x)[0][0].replace("__label__", "")))
 
-    results_folder = f"./studienarbeit/modeling/results/fasttext/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{epochs}_{learning_rate}_{word_ngrams}"
     class_distribution = pd.Series(y_train).value_counts().to_dict()
+    duration = end_time - start_time
     count_df = {
         "train": X_train.shape[0],
         "test": X_test.shape[0],
         "total": count_entries,
         "ratio": {"train": X_train.shape[0] / count_entries, "test": X_test.shape[0] / count_entries},
     }
+
     evaluate_test_results(
         np.array(df_test["prediction"]),
         np.array(df_test["party"]),
         results_folder,
         class_distribution,
+        duration,
         count_df,
         DATA_PREFIX,
     )
@@ -142,6 +172,9 @@ def sklearn(
     representation: str,
     model: str,
 ) -> None:
+    results_folder = Path(
+        f"./studienarbeit/modeling/results/sklearn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{representation}_{model}/"
+    )
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     X_train, X_test, y_train, y_test = get_split_data(df, "tokenized_text", "party", num_classes, False, False)
@@ -168,18 +201,22 @@ def sklearn(
         case "sgd":
             classifier = SGDClassifier()
 
+    start_time = time.time()
     classifier.fit(X_train_vec, y_train)
+    end_time = time.time()
 
     y_pred = classifier.predict(X_test_vec)
-    results_folder = f"./studienarbeit/modeling/results/sklearn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{representation}_{model}"
+
     class_distribution = pd.Series(y_train).value_counts().to_dict()
+    duration = end_time - start_time
     count_df = {
         "train": X_train.shape[0],
         "test": X_test.shape[0],
         "total": count_entries,
         "ratio": {"train": X_train_vec.shape[0] / count_entries, "test": X_test_vec.shape[0] / count_entries},
     }
-    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, count_df, DATA_PREFIX)
+
+    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, duration, count_df, DATA_PREFIX)
 
 
 def dnn(
@@ -194,6 +231,9 @@ def dnn(
     learning_rate: float,
     batch_size: int,
 ) -> None:
+    results_folder = Path(
+        f"./studienarbeit/modeling/results/dnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{representation}_{epochs}_{learning_rate}_{batch_size}/"
+    )
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     X_train, X_val, X_test, y_train, y_val, y_test = get_split_data(
@@ -218,11 +258,14 @@ def dnn(
     dnn_approach = DNNApproach(num_classes, None, X_train_vec.shape[0])
     model = dnn_approach.build_model(variation)
 
+    start_time = time.time()
     y_pred = train_keras_model(
         model, X_train_vec, y_train, X_val_vec, y_val, X_test_vec, batch_size, epochs, learning_rate
     )
-    results_folder = f"./studienarbeit/modeling/results/dnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{representation}_{epochs}_{learning_rate}_{batch_size}"
+    end_time = time.time()
+
     class_distribution = pd.Series(y_train).value_counts().to_dict()
+    duration = end_time - start_time
     count_df = {
         "train": X_train.shape[0],
         "test": X_test.shape[0],
@@ -234,7 +277,8 @@ def dnn(
             "val": X_val_vec.shape[0] / count_entries,
         },
     }
-    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, count_df, DATA_PREFIX)
+
+    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, duration, count_df, DATA_PREFIX)
 
 
 def cnn(
@@ -249,6 +293,9 @@ def cnn(
     learning_rate: float,
     batch_size: int,
 ) -> None:
+    results_folder = Path(
+        f"./studienarbeit/modeling/results/cnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{embeddings}_{epochs}_{learning_rate}_{batch_size}/"
+    )
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     X_train, X_val, X_test, y_train, y_val, y_test = get_split_data(df, "clean_text", "party", num_classes, True, True)
@@ -279,11 +326,14 @@ def cnn(
     cnn_approach = CNNApproach(num_classes, embedding_obj, MAX_FEATURES)
     model = cnn_approach.build_model(variation)
 
+    start_time = time.time()
     y_pred = train_keras_model(
         model, X_train_vec, y_train, X_val_vec, y_val, X_test_vec, batch_size, epochs, learning_rate
     )
-    results_folder = f"./studienarbeit/modeling/results/cnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{embeddings}_{epochs}_{learning_rate}_{batch_size}"
+    end_time = time.time()
+
     class_distribution = pd.Series(y_train).value_counts().to_dict()
+    duration = end_time - start_time
     count_df = {
         "train": X_train.shape[0],
         "test": X_test.shape[0],
@@ -295,7 +345,8 @@ def cnn(
             "val": X_val_vec.shape[0] / count_entries,
         },
     }
-    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, count_df, DATA_PREFIX)
+
+    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, duration, count_df, DATA_PREFIX)
 
 
 def bert(
@@ -305,10 +356,14 @@ def bert(
     sampling: Sampling,
     num_classes: int = DEFAULT_NUM_CLASSES,
     model_checkpoint: str = "distilbert-base-german-cased",
-    epochs: int = 2,
-    learning_rate: float = 7e-5,
-    batch_size: int = 4,
+    epochs: int = 3,
+    learning_rate: float = 2e-5,
+    batch_size: int = 16,
 ) -> None:
+    device = _get_available_device()
+    results_folder = Path(
+        f"./studienarbeit/modeling/results/bert/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{model_checkpoint}_{epochs}_{learning_rate}_{batch_size}/"
+    )
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
@@ -317,17 +372,15 @@ def bert(
     train_hg, val_hg, test_hg = get_bert_data(df, tokenizer, sampling)
 
     training_args = TrainingArguments(
-        output_dir="out",
+        output_dir=results_folder / "out",
         overwrite_output_dir=True,
         num_train_epochs=epochs,
-        use_mps_device=True,
-        per_device_train_batch_size=batch_size,
-        per_device_eval_batch_size=batch_size,
+        use_mps_device=(device == Device.MPS),
         load_best_model_at_end=True,
-        save_steps=2000,
+        save_steps=10000,
         save_total_limit=2,
         evaluation_strategy="steps",
-        eval_steps=500,
+        eval_steps=5000,
         learning_rate=learning_rate,
         do_train=True,
         do_eval=True,
@@ -348,12 +401,14 @@ def bert(
         f"Train and test data with a ratio of {train_hg.shape[0] / count_entries}/{test_hg.shape[0] / count_entries}/{val_hg.shape[0] / count_entries}"
     )
 
+    start_time = time.time()
     trainer.train()
+    end_time = time.time()
 
     y_pred = trainer.predict(test_hg)
     y_pred = np.argmax(y_pred.predictions, axis=1)
     y_test = test_hg["label"]
-    results_folder = f"./studienarbeit/modeling/results/bert/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{model_checkpoint}_{epochs}_{learning_rate}_{batch_size}"
+
     class_distribution = pd.Series(train_hg["label"]).value_counts().to_dict()
     count_df = {
         "train": train_hg.shape[0],
@@ -366,7 +421,9 @@ def bert(
             "val": val_hg.shape[0] / count_entries,
         },
     }
-    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, count_df, DATA_PREFIX)
+    duration = end_time - start_time
+
+    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, duration, count_df, DATA_PREFIX)
 
 
 if __name__ == "__main__":

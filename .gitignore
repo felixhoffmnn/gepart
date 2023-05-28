@@ -200,7 +200,7 @@ data/replication
 *.pkl
 *.parquet
 data/party_programs/**/*.pdf
-**/out/*
+**/out/
 !**/out/*.pdf
 .DS_Store
 *.bin

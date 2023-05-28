@@ -65,6 +65,8 @@ tensorflow = { version = "^2.12.0", platform = "linux" }
 datasets = "^2.12.0"
 keras-preprocessing = "^1.1.2"
 protobuf = { version = "3.20.3", platform = "darwin" }
+accelerate = "^0.19.0"
+nvidia-ml-py3 = "^7.352.0"
 
 [tool.poetry.group.dev.dependencies]
 black = { extras = ["jupyter"], version = "^22.8.0" }
@@ -74,11 +76,6 @@ jupyter = "^1.0.0"
 ruff = "^0.0.270"
 
 [tool.ruff]
-line-length = 120
-target-version = "py310"
-unfixable = [
-  "ERA", # do not autoremove commented out code
-]
 select = [
   "E",   # pycodestyle
   "F",   # flake8
@@ -89,6 +86,10 @@ select = [
   # "N",   # pep8-naming
   "D",   # pydocstyle
   "Q",   # flake8-quotes
+  "PLC", # pylint conventions
+  "PLE", # pylint errors
+  "PLR", # pylint refactor
+  "PTH", # flake8-use-pathlib
   "PIE", # flake8-pie
   "PGH", # pygrep
   "RUF", # ruff checks
@@ -97,18 +98,29 @@ select = [
   "TID", # flake8-tidy-imports
   "UP",  # pyupgrade
 ]
+line-length = 120
+target-version = "py310"
+unfixable = [
+  "ERA", # do not autoremove commented out code
+]
 ignore = [
-  "E501", # line too long, handled by black
-  "D401", # imperative mood
+  "E501",    # line too long, handled by black
+  "D401",    # imperative mood
+  "PTH123",  # builtin-open
+  "PLR2004", # replace number with constant
+  "PLR0913", # too many arguments
 
   # TODO: Fix these
-  "D100", # missing docstring in public module
-  "D101", # missing docstring in public class
-  "D102", # missing docstring in public method
-  "D103", # missing docstring in public function
-  "D104", # missing docstring in public package
+  "D100",   # missing docstring in public module
+  "D101",   # missing docstring in public class
+  "D102",   # missing docstring in public method
+  "D103",   # missing docstring in public function
+  "D104",   # missing docstring in public package
   "PGH003", # Specific rule codes
 ]
+
+[tool.ruff.flake8-quotes]
+docstring-quotes = "double"
 
 [tool.ruff.pydocstyle]
 convention = "numpy"
@@ -117,7 +129,12 @@ convention = "numpy"
 line-length = 120
 target-version = ["py310"]
 
-[tool.mypy]
+[tool.isort]
+# Keept for ensuring that isort and black are compatible
+# TODO: Remove since isort should not be needed anymore -> ruff
+profile = "black"
+
+# [tool.mypy]
 # strict = true
 
 [build-system]

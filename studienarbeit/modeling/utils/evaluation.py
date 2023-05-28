@@ -12,9 +12,10 @@ from sklearn.metrics import (
 
 
 def save_metadata(
-    class_distribution: dict[str | int, int],
+    class_distribution: dict[str, int] | dict[int, int],
+    duration: float,
     count_df: dict[str, int] | dict[int, int] | None | None,
-    results_folder: str,
+    results_folder: Path | str,
 ):
     """Function to save the metadata of the training to the results folder.
 
@@ -22,15 +23,18 @@ def save_metadata(
 
     Parameters
     ----------
-    class_distribution : dict[str  |  int, int]
+    class_distribution : dict[str, int] | dict[int, int]
         The class distribution of the training data.
+    duration : float
+        The duration of the training in seconds.
     count_df : dict[str, int] | dict[int, int] | None, optional
         The number of samples per dataframe (train, test, val). _By default `None`_
-    results_folder : str
+    results_folder : Path | str
         The folder to save the results to.
     """
     metadata = {
         "datetime": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+        "duration": duration,
         "class_distribution": class_distribution,
         "count_df": count_df if count_df is not None else {},
     }
@@ -42,8 +46,9 @@ def save_metadata(
 def evaluate_test_results(
     y_pred,
     y_test,
-    results_folder: str,
-    class_distribution: dict[str | int, int],
+    results_folder: Path | str,
+    class_distribution: dict[str, int] | dict[int, int],
+    duration: float,
     count_df: dict[str, int] | dict[int, int] | None = None,
     data_prefix: str = "../..",
 ):
@@ -57,10 +62,12 @@ def evaluate_test_results(
         The predicted labels.
     y_test : np.ndarray
         The true labels.
-    results_folder : str
+    results_folder : Path | str
         The folder to save the results to.
     class_distribution : dict
         The class distribution of the training data.
+    duration : float
+        The duration of the training in seconds.
     count_df : dict[str, int] | dict[int, int] | None, optional
         The number of samples per dataframe (train, test, val). _By default `None`_
     data_prefix : str, optional
@@ -71,12 +78,16 @@ def evaluate_test_results(
 
     y_test_num = np.argmax(y_test, axis=1) if type(y_test) != list and y_test.ndim == 2 else y_test
 
-    Path(results_folder).mkdir(parents=True, exist_ok=True)
-    for file in Path(results_folder).glob("*"):
-        # Delete all files in the folder to avoid mixing old and new results
-        file.unlink()
+    if isinstance(results_folder, str):
+        results_folder = Path(results_folder)
 
-    save_metadata(class_distribution, count_df, results_folder)
+    results_folder.mkdir(parents=True, exist_ok=True)
+    for obj in results_folder.glob("*"):
+        # Delete all files in the results folder
+        if obj.is_file():
+            obj.unlink()
+
+    save_metadata(class_distribution, duration, count_df, results_folder)
 
     report = classification_report(y_test_num, y_pred)
     with open(f"{results_folder}/classification_report.txt", "w", encoding="utf-8") as f:
