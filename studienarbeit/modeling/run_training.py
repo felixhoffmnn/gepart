@@ -42,6 +42,7 @@ DEFAULT_NUM_CLASSES = 6
 
 # The DATA_PREFIX is intended to be modified by the user.
 DATA_PREFIX = "."
+BASE_PATH = Path("./studienarbeit/modeling")
 
 
 class Dataset(str, Enum):
@@ -82,7 +83,7 @@ def fasttext(
     num_samples: int,
     sampling: Sampling,
     num_classes: int = DEFAULT_NUM_CLASSES,
-    epochs: int = 5,
+    epochs: int = 20,
     learning_rate: float = 0.1,
     word_ngrams: int = 2,
 ) -> None:
@@ -110,8 +111,12 @@ def fasttext(
     word_ngrams : int, optional
         The number of n-grams to use for training. _By default `2`_
     """
-    results_folder = Path(
-        f"./studienarbeit/modeling/results/fasttext/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{epochs}_{learning_rate}_{word_ngrams}/"
+    results_folder = (
+        BASE_PATH
+        / "results"
+        / "fasttext"
+        / dataset
+        / f"{sentence_level}_{num_samples}_{sampling}_{num_classes}_{epochs}_{learning_rate}_{word_ngrams}"
     )
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
@@ -172,8 +177,12 @@ def sklearn(
     representation: str,
     model: str,
 ) -> None:
-    results_folder = Path(
-        f"./studienarbeit/modeling/results/sklearn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{representation}_{model}/"
+    results_folder = (
+        BASE_PATH
+        / "results"
+        / "sklearn"
+        / dataset
+        / f"{sentence_level}_{num_samples}_{sampling}_{num_classes}_{representation}_{model}"
     )
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
@@ -231,9 +240,14 @@ def dnn(
     learning_rate: float,
     batch_size: int,
 ) -> None:
-    results_folder = Path(
-        f"./studienarbeit/modeling/results/dnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{representation}_{epochs}_{learning_rate}_{batch_size}/"
+    results_folder = (
+        BASE_PATH
+        / "results"
+        / "dnn"
+        / dataset
+        / f"{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{representation}_{epochs}_{learning_rate}_{batch_size}"
     )
+
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
     X_train, X_val, X_test, y_train, y_val, y_test = get_split_data(
@@ -293,8 +307,12 @@ def cnn(
     learning_rate: float,
     batch_size: int,
 ) -> None:
-    results_folder = Path(
-        f"./studienarbeit/modeling/results/cnn/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{embeddings}_{epochs}_{learning_rate}_{batch_size}/"
+    results_folder = (
+        BASE_PATH
+        / "results"
+        / "cnn"
+        / dataset
+        / f"{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{embeddings}_{epochs}_{learning_rate}_{batch_size}"
     )
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
@@ -361,8 +379,12 @@ def bert(
     batch_size: int = 16,
 ) -> None:
     device = _get_available_device()
-    results_folder = Path(
-        f"./studienarbeit/modeling/results/bert/{dataset}/{sentence_level}_{num_samples}_{sampling}_{num_classes}_{model_checkpoint}_{epochs}_{learning_rate}_{batch_size}/"
+    results_folder = (
+        BASE_PATH
+        / "results"
+        / "bert"
+        / dataset
+        / f"{sentence_level}_{num_samples}_{sampling}_{num_classes}_{model_checkpoint.replace('/', '-')}_{epochs}_{learning_rate}_{batch_size}"
     )
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
@@ -377,10 +399,9 @@ def bert(
         num_train_epochs=epochs,
         use_mps_device=(device == Device.MPS),
         load_best_model_at_end=True,
-        save_steps=10000,
         save_total_limit=2,
-        evaluation_strategy="steps",
-        eval_steps=5000,
+        evaluation_strategy="epoch",
+        save_strategy="epoch",
         learning_rate=learning_rate,
         do_train=True,
         do_eval=True,
