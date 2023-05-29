@@ -9,7 +9,8 @@ import pandas as pd
 import torch
 import torch.backends.mps
 from loguru import logger
-from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.neural_network import MLPClassifier
 from sklearn.svm import LinearSVC
 from transformers import (
     AutoModelForSequenceClassification,
@@ -36,7 +37,7 @@ from studienarbeit.modeling.utils.evaluation import evaluate_test_results
 from studienarbeit.modeling.utils.huggingface import compute_metrics
 from studienarbeit.modeling.utils.keras import train_keras_model
 
-MAX_FEATURES = 100000
+MAX_FEATURES = 50000
 MAX_LEN = 500
 DEFAULT_NUM_CLASSES = 6
 
@@ -203,12 +204,23 @@ def sklearn(
     )
 
     match (model):
-        case "logistic_regression":
-            classifier = LogisticRegression(solver="sag", multi_class="multinomial")
         case "linear_svc":
-            classifier = LinearSVC(multi_class="crammer_singer")
-        case "sgd":
-            classifier = SGDClassifier()
+            classifier = LinearSVC(multi_class="crammer_singer", max_iter=2000)
+        case "multinomial_nb":
+            classifier = MultinomialNB()
+        case "mlp":
+            classifier = MLPClassifier(
+                activation="relu",
+                hidden_layer_sizes=(100,),
+                learning_rate="invscaling",
+                learning_rate_init=7e-4,
+                max_iter=50,
+                tol=5e-5,
+                solver="adam",
+                verbose=True,
+            )
+        case _:
+            raise ValueError(f"Model {model} not supported.")
 
     start_time = time.time()
     classifier.fit(X_train_vec, y_train)
@@ -301,7 +313,6 @@ def cnn(
     num_samples: int,
     sampling: Sampling,
     num_classes: int,
-    variation: int,
     embeddings: str,
     epochs: int,
     learning_rate: float,
@@ -312,7 +323,7 @@ def cnn(
         / "results"
         / "cnn"
         / dataset
-        / f"{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{embeddings}_{epochs}_{learning_rate}_{batch_size}"
+        / f"{sentence_level}_{num_samples}_{sampling}_{num_classes}_{embeddings}_{epochs}_{learning_rate}_{batch_size}"
     )
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
@@ -342,7 +353,7 @@ def cnn(
     embedding_obj.build_embedding_matrix(word_index)
 
     cnn_approach = CNNApproach(num_classes, embedding_obj, MAX_FEATURES)
-    model = cnn_approach.build_model(variation)
+    model = cnn_approach.build_model(None)
 
     start_time = time.time()
     y_pred = train_keras_model(
@@ -350,6 +361,8 @@ def cnn(
     )
     end_time = time.time()
 
+    if (type(y_train) != list) and (y_train.ndim == 2):
+        y_train = np.argmax(y_train, axis=1)
     class_distribution = pd.Series(y_train).value_counts().to_dict()
     duration = end_time - start_time
     count_df = {

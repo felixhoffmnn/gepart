@@ -7,7 +7,7 @@ import pyarrow as pa
 from datasets import Dataset
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler
-from keras.layers import TextVectorization
+from keras.preprocessing.text import Tokenizer
 from keras.utils import to_categorical
 from keras_preprocessing.sequence import pad_sequences
 from loguru import logger
@@ -73,7 +73,7 @@ def get_split_data(
 ):
     train, test = train_test_split(df, test_size=0.2, shuffle=True)
     if include_validation:
-        train, val = train_test_split(train, test_size=0.2, shuffle=True)
+        train, val = train_test_split(train, test_size=0.1, shuffle=True)
         X_val = np.array(val[text_col])
         y_val = np.array(to_categorical(val[label_col], num_classes))
 
@@ -114,7 +114,7 @@ def process_bert_data(tokenizer, df):
 
 def get_bert_data(df, tokenizer, sampling="none"):
     df_train, df_test = train_test_split(df, test_size=0.2)
-    df_train, df_val = train_test_split(df_train, test_size=0.2)
+    df_train, df_val = train_test_split(df_train, test_size=0.1)
 
     if sampling != "none":
         X_train, y_train = get_sampled_data(
@@ -130,9 +130,7 @@ def get_bert_data(df, tokenizer, sampling="none"):
 
 
 def get_vectorized_input_data(X_train, X_val, X_test, max_vocab_size, max_len):
-    tokenizer = TextVectorization(
-        max_tokens=max_vocab_size, standardize="lower", split="whitespace", output_sequence_length=max_len
-    )
+    tokenizer = Tokenizer(lower=True, split=" ", num_words=max_vocab_size)
     tokenizer.fit_on_texts(X_train)
 
     X_train_vec = tokenizer.texts_to_sequences(X_train)
@@ -141,7 +139,6 @@ def get_vectorized_input_data(X_train, X_val, X_test, max_vocab_size, max_len):
 
     seq_lengths = [len(x) for x in X_train_vec]
     max_train_len = int(np.percentile(seq_lengths, 99))
-
     adapted_max_len = min(max_len, max_train_len)
     logger.info(f"Adapted max sequence length: min(99th percentile, fixed max length): {adapted_max_len}")
 
@@ -191,10 +188,8 @@ def cache_fasttext_files(X_train, X_test, y_train, y_test):
 def get_vectorizer(representation, max_features):
     match (representation):
         case "tf-idf":
-            return TfidfVectorizer(
-                analyzer="word", max_df=0.3, min_df=10, ngram_range=(1, 2), norm="l2", max_features=max_features
-            )
+            return TfidfVectorizer(max_df=0.2, min_df=1, ngram_range=(1, 1), max_features=max_features)
         case "bow":
-            return CountVectorizer(lowercase=True, max_features=max_features)
+            return CountVectorizer(max_df=0.2, min_df=1, ngram_range=(1, 1), max_features=max_features)
         case _:
             raise ValueError("Invalid representation for DNN approach.")

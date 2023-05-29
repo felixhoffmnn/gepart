@@ -97,3 +97,4 @@ def evaluate_test_results(
     disp = ConfusionMatrixDisplay(confusion_matrix=conf_mat, display_labels=party_encoding.keys())
     disp.plot()
     plt.savefig(f"{results_folder}/confusion_matrix.png", dpi=300)
+    plt.close()
