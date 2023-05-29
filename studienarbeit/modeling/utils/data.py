@@ -177,7 +177,7 @@ def get_sampled_data(X_train, y_train, sampling="under"):
 
 
 def cache_fasttext_files(X_train, X_test, y_train, y_test):
-    Path.mkdir("cache/", parents=True, exist_ok=True)
+    Path("cache/").mkdir(parents=True, exist_ok=True)
 
     with open("cache/train_ft.txt", "w", encoding="utf-8") as f:
         for party, text in zip(y_train, X_train, strict=True):
