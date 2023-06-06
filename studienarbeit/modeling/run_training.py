@@ -87,6 +87,7 @@ def fasttext(
     epochs: int = 20,
     learning_rate: float = 0.1,
     word_ngrams: int = 2,
+    test_dataset: Dataset | None = None,
 ) -> None:
     """Function enabling the training of a fasttext model.
 
@@ -111,17 +112,26 @@ def fasttext(
         The learning rate to use for training. _By default `0.1`_
     word_ngrams : int, optional
         The number of n-grams to use for training. _By default `2`_
+    test_dataset : Dataset, optional
+        The dataset to use for testing. If not specified, the training dataset is used. _By default `None`_
     """
     results_folder = (
         BASE_PATH
         / "results"
         / "fasttext"
         / dataset
-        / f"{sentence_level}_{num_samples}_{sampling}_{num_classes}_{epochs}_{learning_rate}_{word_ngrams}"
+        / f"{sentence_level}_{num_samples}_{sampling}_{num_classes}_{epochs}_{learning_rate}_{word_ngrams}_{test_dataset}"
     )
+
     df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
 
-    X_train, X_test, y_train, y_test = get_split_data(df, "tokenized_text", "party", num_classes, False, False)
+    if test_dataset is None:
+        X_train, X_test, y_train, y_test = get_split_data(df, "tokenized_text", "party", num_classes, False, False)
+    else:
+        X_train, y_train = np.array(df["tokenized_text"]), np.array(df["party"])
+        df_test = load_dataset(test_dataset, 0, sentence_level, DATA_PREFIX)
+        X_test, y_test = np.array(df_test["tokenized_text"]), np.array(df_test["party"])
+        logger.info(f"Using {test_dataset} as test dataset with {len(X_test)} samples.")
 
     if sampling != Sampling.NONE:
         X_train, y_train = get_sampled_data(X_train, y_train, sampling)
