@@ -21,7 +21,6 @@ from transformers import (
 )
 
 from studienarbeit.modeling.approaches.cnn import CNNApproach
-from studienarbeit.modeling.approaches.dnn import DNNApproach
 from studienarbeit.modeling.embeddings.glove import GloVe
 from studienarbeit.modeling.embeddings.word2vec import Word2Vec
 from studienarbeit.modeling.utils.data import (
@@ -188,6 +187,26 @@ def sklearn(
     representation: str,
     model: str,
 ) -> None:
+    """Function enabling the training of a sklearn model.
+
+    Parameters
+    ----------
+    dataset : Dataset
+        The dataset to use for training. Can be one of "speeches", "party_programs", "tweets", "all".
+    sentence_level : bool
+        Whether to use sentence-level or document-level data. Use 0 for document-level and 1 for sentence-level.
+    num_samples : int
+        The number of samples to use for training. If 0, all samples are used.
+    sampling : Sampling
+        The sampling strategy to use. Can be one of "none", "over", "under".
+    num_classes : int
+        The number of classes to use for training. This is not yet implemented but will be used in the future to
+        add a neutral class.
+    representation : str
+        The representation to use for training. Can be "tfidf" or "bow".
+    model : str
+        The model to use for training. Can be one of "linear_svc", "multinomial_nb", "mlp".
+    """
     results_folder = (
         BASE_PATH
         / "results"
@@ -250,73 +269,6 @@ def sklearn(
     evaluate_test_results(y_pred, y_test, results_folder, class_distribution, duration, count_df, DATA_PREFIX)
 
 
-def dnn(
-    dataset: Dataset,
-    sentence_level: bool,
-    num_samples: int,
-    sampling: Sampling,
-    num_classes: int,
-    variation: int,
-    representation: str,
-    epochs: int,
-    learning_rate: float,
-    batch_size: int,
-) -> None:
-    results_folder = (
-        BASE_PATH
-        / "results"
-        / "dnn"
-        / dataset
-        / f"{sentence_level}_{num_samples}_{sampling}_{num_classes}_{variation}_{representation}_{epochs}_{learning_rate}_{batch_size}"
-    )
-
-    df = load_dataset(dataset, num_samples, sentence_level, DATA_PREFIX)
-
-    X_train, X_val, X_test, y_train, y_val, y_test = get_split_data(
-        df, "tokenized_text", "party", num_classes, True, True
-    )
-
-    vectorizer = get_vectorizer(representation, MAX_FEATURES)
-
-    X_train_vec = vectorizer.fit_transform(X_train).toarray()
-    X_val_vec = vectorizer.transform(X_val).toarray()
-    X_test_vec = vectorizer.transform(X_test).toarray()
-
-    if sampling != Sampling.NONE:
-        X_train_vec, y_train = get_sampled_data(X_train_vec, y_train, sampling)
-        logger.success(f"Sampled data with {sampling}sampling.")
-
-    count_entries = X_train_vec.shape[0] + X_test_vec.shape[0] + X_val_vec.shape[0]
-    logger.info(
-        f"Train and test data with a ratio of {X_train_vec.shape[0] / count_entries}/{X_test_vec.shape[0] / count_entries}/{X_val_vec.shape[0] / count_entries}"
-    )
-
-    dnn_approach = DNNApproach(num_classes, None, X_train_vec.shape[0])
-    model = dnn_approach.build_model(variation)
-
-    start_time = time.time()
-    y_pred = train_keras_model(
-        model, X_train_vec, y_train, X_val_vec, y_val, X_test_vec, batch_size, epochs, learning_rate
-    )
-    end_time = time.time()
-
-    class_distribution = pd.Series(y_train).value_counts().to_dict()
-    duration = end_time - start_time
-    count_df = {
-        "train": X_train.shape[0],
-        "test": X_test.shape[0],
-        "val": X_val.shape[0],
-        "total": count_entries,
-        "ratio": {
-            "train": X_train_vec.shape[0] / count_entries,
-            "test": X_test_vec.shape[0] / count_entries,
-            "val": X_val_vec.shape[0] / count_entries,
-        },
-    }
-
-    evaluate_test_results(y_pred, y_test, results_folder, class_distribution, duration, count_df, DATA_PREFIX)
-
-
 def cnn(
     dataset: Dataset,
     sentence_level: bool,
@@ -328,6 +280,30 @@ def cnn(
     learning_rate: float,
     batch_size: int,
 ) -> None:
+    """Function enabling the training of a cnn model.
+
+    Parameters
+    ----------
+    dataset : Dataset
+        The dataset to use for training. Can be one of "speeches", "party_programs", "tweets", "all".
+    sentence_level : bool
+        Whether to use sentence-level or document-level data. Use 0 for document-level and 1 for sentence-level.
+    num_samples : int
+        The number of samples to use for training. If 0, all samples are used.
+    sampling : Sampling
+        The sampling strategy to use. Can be one of "none", "over", "under".
+    num_classes : int
+        The number of classes to use for training. This is not yet implemented but will be used in the future to
+        add a neutral class.
+    embeddings : str
+        The embeddings to use for training. Can be "glove" or "word2vec".
+    epochs : int
+        The number of epochs to train the model for.
+    learning_rate : float
+        The learning rate to use for training.
+    batch_size : int
+        The batch size to use for training.
+    """
     results_folder = (
         BASE_PATH
         / "results"
@@ -401,6 +377,30 @@ def bert(
     learning_rate: float = 2e-5,
     batch_size: int = 16,
 ) -> None:
+    """Function enabling the training of a bert model.
+
+    Parameters
+    ----------
+    dataset : Dataset
+        The dataset to use for training. Can be one of "speeches", "party_programs", "tweets", "all".
+    sentence_level : bool
+        Whether to use sentence-level or document-level data. Use 0 for document-level and 1 for sentence-level.
+    num_samples : int
+        The number of samples to use for training. If 0, all samples are used.
+    sampling : Sampling
+        The sampling strategy to use. Can be one of "none", "over", "under".
+    num_classes : int, optional
+        The number of classes to use for training. This is not yet implemented but will be used in the future to
+        add a neutral class. _By default `6`_
+    model_checkpoint : str, optional
+        The model checkpoint to use for training. _By default `distilbert-base-german-cased`_
+    epochs : int, optional
+        The number of epochs to train the model for. _By default `3`_
+    learning_rate : float, optional
+        The learning rate to use for training. _By default `2e-5`_
+    batch_size : int, optional
+        The batch size to use for training. _By default `16`_
+    """
     device = _get_available_device()
     results_folder = (
         BASE_PATH
@@ -471,4 +471,4 @@ def bert(
 
 
 if __name__ == "__main__":
-    fire.Fire(component={"fasttext": fasttext, "sklearn": sklearn, "dnn": dnn, "cnn": cnn, "bert": bert})
+    fire.Fire(component={"fasttext": fasttext, "sklearn": sklearn, "cnn": cnn, "bert": bert})
