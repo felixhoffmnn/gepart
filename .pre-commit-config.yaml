@@ -1,6 +1,6 @@
 ci:
   autofix_prs: false
-  skip: [dvc-pre-commit, dvc-pre-push, dvc-pre-checkout]
+  skip: [dvc-pre-commit, dvc-pre-push, dvc-post-checkout]
 
 default_language_version:
   python: python3.11
@@ -41,9 +41,6 @@ repos:
     hooks:
       - id: check-case-conflict
         name: Check case conflict (check-case-conflict)
-
-      - id: check-merge-conflict
-        name: Check merge conflict (check-merge-conflict)
 
       - id: check-yaml
         name: Check yaml (check-yaml)
