@@ -1,0 +1,4 @@
+outs:
+- md5: 52a77515d980d977e78c36b12557019c
+  size: 48643982
+  path: speeches_before_cleaning.parquet

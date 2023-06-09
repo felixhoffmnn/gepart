@@ -6,8 +6,3 @@ party_encoding = {
     "SPD": 4,
     "UNION": 5,
 }
-
-gender_encoding = {
-    "male": 0,
-    "female": 1,
-}

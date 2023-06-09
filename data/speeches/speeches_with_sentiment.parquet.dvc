@@ -1,0 +1,4 @@
+outs:
+- md5: a3535df5c742a3fb04621f7ced3543d0
+  size: 68773138
+  path: speeches_with_sentiment.parquet

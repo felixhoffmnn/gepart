@@ -1,0 +1,4 @@
+outs:
+- md5: 6645b42136e396fb515fbc6e3c1a8ff2
+  size: 14661717
+  path: party_programs_with_sentiment.parquet

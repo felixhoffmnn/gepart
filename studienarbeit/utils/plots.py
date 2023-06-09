@@ -5,17 +5,20 @@ import pandas as pd
 import seaborn as sns
 from loguru import logger
 from matplotlib import pyplot as plt
+from tqdm import tqdm
 from wordcloud import WordCloud
 
 from studienarbeit.utils.load import EDataTypes
 
+tqdm.pandas()
+
 
 class Plots:
-    """
-    TODO: Plot count per day per party
-    """
+    """TODO: Plot count per day per party."""
 
-    def __init__(self, data_type: EDataTypes, data_dir: str | Path = "../../data", party_palette=None):
+    def __init__(
+        self, data_type: EDataTypes, data_dir: str | Path = "../../data", party_palette: dict[str, str] | None = None
+    ):
         self.color_palette = "muted"
         self.party_palette = party_palette
         sns.set(style="white", palette=self.color_palette, rc={"figure.figsize": (20, 8)})
@@ -28,7 +31,7 @@ class Plots:
             logger.info(f"Creating directory {self.data_dir}")
             self.data_dir.mkdir(parents=True)
 
-        with open("../../data/stopwords/german_stopwords_full.txt", "r", encoding="utf-8") as f:
+        with open("../../data/stopwords/german_stopwords_full.txt", encoding="utf-8") as f:
             self.stopwords = f.read().splitlines()
 
     def _compose_title(self, title: str):
@@ -37,6 +40,7 @@ class Plots:
             EDataTypes.SPEECHES.value: "Reden",
             EDataTypes.PARTY_PROGRAMS.value: "Wahlprogramme",
         }
+
         return f"{title} ({data_type_names[self.data_type]})"
 
     def party_count(self, df: pd.DataFrame, column="party", title="Anzahl an Einträgen pro Partei"):
@@ -139,7 +143,13 @@ class Plots:
     def user_count(self, df: pd.DataFrame, column="screen_name", title="Anzahl der Nutzer pro Partei"):
         fig, axs = plt.subplots()
 
-        sns.barplot(data=df.groupby("party")[column].nunique().reset_index(name="count"), x="party", y="count", ax=axs)
+        sns.barplot(
+            data=df.groupby("party")[column].nunique().reset_index(name="count"),
+            x="party",
+            y="count",
+            palette=self.party_palette,
+            ax=axs,
+        )
 
         fig.suptitle(self._compose_title(title))
         axs.set_xlabel("Parteien")
@@ -153,7 +163,7 @@ class Plots:
         speeches = ["kollege", "kollegin", "dame", "herr", "jahr", "antrag", "rede"]
         all_stopwords = self.stopwords + numbers + verbs + speeches
 
-        df["tokenized_text_without_stopwords"] = df["tokenized_text"].apply(
+        df["tokenized_text_without_stopwords"] = df[column].apply(
             lambda x: " ".join([word for word in x.split() if word not in all_stopwords])
         )
 
@@ -174,7 +184,7 @@ class Plots:
     def _get_wordcloud(self, df: pd.DataFrame, party: str, max_words: int = 20) -> WordCloud:
         df_party = df[df["party"] == party]
         wc = WordCloud()
-        counts_all = Counter()
+        counts_all = Counter()  # type: ignore
 
         df_party["tokenized_text_without_stopwords"].progress_apply(lambda x: counts_all.update(wc.process_text(x)))
         wc.generate_from_frequencies(counts_all)

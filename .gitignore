@@ -147,6 +147,9 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+# ruff
+.ruff_cache/
+
 # Pyre type checker
 .pyre/
 
@@ -197,7 +200,7 @@ data/replication
 *.pkl
 *.parquet
 data/party_programs/**/*.pdf
-**/out/*
+**/out/
 !**/out/*.pdf
 .DS_Store
 *.bin
@@ -206,3 +209,9 @@ data/party_programs/**/*.pdf
 **/test*.txt
 **/cache/
 **/images/
+*.h5
+/data/embeddings/*.pkl
+/data/embeddings/*.txt
+/data/embeddings/*.model
+studienarbeit/modeling/checkpoints/
+studienarbeit/modeling/results/

@@ -1,0 +1,4 @@
+outs:
+- md5: 208b9f2488cde11fdb9a908fe019df9e
+  size: 3744610526
+  path: glove_german_300.txt

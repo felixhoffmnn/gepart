@@ -1,0 +1,4 @@
+outs:
+- md5: b5e3648fa5d6303815907390e8f86176
+  size: 2464832081
+  path: fasttext_german_300.pkl
