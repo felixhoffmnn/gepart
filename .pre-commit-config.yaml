@@ -7,27 +7,27 @@ default_language_version:
 
 repos:
   - repo: https://github.com/python-poetry/poetry
-    rev: 1.5.0
+    rev: 1.8.0
     hooks:
       - id: poetry-check
         name: Check poetry (poetry-check)
         always_run: true
 
   - repo: https://github.com/iterative/dvc
-    rev: 2.51.0
+    rev: 3.55.2
     hooks:
       - id: dvc-pre-commit
         additional_dependencies:
           - .[all]
         language_version: python3
         stages:
-          - commit
+          - pre-commit
       - id: dvc-pre-push
         additional_dependencies:
           - .[all]
         language_version: python3
         stages:
-          - push
+          - pre-push
       - id: dvc-post-checkout
         additional_dependencies:
           - .[all]
@@ -37,7 +37,7 @@ repos:
         always_run: true
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v5.0.0
     hooks:
       - id: check-case-conflict
         name: Check case conflict (check-case-conflict)
@@ -55,21 +55,21 @@ repos:
         name: Check added large files (check-added-large-files)
 
   - repo: https://github.com/kynan/nbstripout
-    rev: 0.6.1
+    rev: 0.7.1
     hooks:
       - id: nbstripout
         name: strip output from notebooks (nbstripout)
-        stages: [commit, push]
+        stages: [pre-commit, pre-push]
         types: [jupyter]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.270
+    rev: v0.7.0
     hooks:
       - id: ruff
         name: Check style and linting (ruff)
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.3.0
+    rev: v1.12.1
     hooks:
       - id: mypy
         name: Check types (mypy)
@@ -77,13 +77,13 @@ repos:
         require_serial: true
 
   - repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 24.10.0
     hooks:
       - id: black-jupyter
         name: Format python code (black)
 
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v2.7.1
+    rev: v4.0.0-alpha.8
     hooks:
       - id: prettier
         name: Format files (prettier)
